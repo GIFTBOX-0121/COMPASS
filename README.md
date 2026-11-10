@@ -1,1 +1,1 @@
-# HOW-TO
+# COMPASS
