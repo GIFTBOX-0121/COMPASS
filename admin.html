@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>COMPASS | Article Manager</title>
+<style>
+:root{--navy:#344c68;--gold:#c49a42;--bg:#f3f6fa;--line:#dce3ec}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#273648;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN",sans-serif}
+header{background:var(--navy);color:white;padding:25px 18px;text-align:center}
+header h1{margin:0;font-size:27px;letter-spacing:.15em}
+header small{letter-spacing:.2em;opacity:.8}
+main{max-width:780px;margin:auto;padding:18px 14px 70px}
+.panel{background:white;border:1px solid var(--line);border-radius:16px;padding:18px;margin-bottom:16px}
+h2{font-size:17px;margin:0 0 17px;color:var(--navy)}
+label{display:block;font-size:13px;font-weight:700;margin:15px 0 7px}
+input,textarea,select{width:100%;font:inherit;border:1px solid #cbd5e1;border-radius:9px;padding:12px;background:white;color:#273648}
+textarea{min-height:75px;resize:vertical}
+button{font:inherit;cursor:pointer;border:0;border-radius:9px;padding:11px 14px}
+.primary{background:var(--navy);color:white;font-weight:700}
+.gold{background:var(--gold);color:white;font-weight:700}
+.light{background:#edf1f6;color:var(--navy)}
+.danger{background:#fff0f0;color:#b12f39}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1}
+.note{font-size:12px;color:#69798c;line-height:1.7}
+#message{font-size:13px;white-space:pre-wrap;margin:12px 0;color:#344c68}
+#editor{border:1px solid #cbd5e1;border-radius:10px;padding:15px;min-height:240px;line-height:1.8;overflow-wrap:anywhere;outline:none}
+#editor:focus{border-color:var(--navy)}
+.toolbar{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:9px}
+.toolbar button{background:#edf1f6;min-width:40px;padding:9px}
+.toolbar input[type=color]{width:45px;height:40px;padding:3px}
+.toolbar select{width:auto;padding:8px}
+.item{border-top:1px solid var(--line);padding:14px 0}
+.item strong{display:block;margin-bottom:5px}
+.item small{color:#728096}
+.item .row{margin-top:10px}
+.hidden{display:none}
+@media(max-width:450px){.panel{padding:14px}.row button{font-size:13px}}
+</style>
+</head>
+<body>
+<header><h1>COMPASS</h1><small>ARTICLE MANAGER</small></header>
+<main>
+<section class="panel">
+<h2>接続・ログイン</h2>
+<label for="api">Worker URL</label>
+<input id="api" type="url" placeholder="https://compass-api.xxxxx.workers.dev" autocomplete="url">
+<label for="token">管理用トークン</label>
+<input id="token" type="password" placeholder="ADMIN_TOKENに設定した文字列" autocomplete="off">
+<p class="note">Worker URLは保存します。トークンはこのタブの間だけ保持し、端末には保存しません。</p>
+<div class="row">
+<button class="primary" id="loginBtn">接続する</button>
+<button class="light" id="logoutBtn">ログアウト</button>
+</div>
+<div id="message" role="status"></div>
+</section>
+
+<section id="workspace" class="hidden">
+<section class="panel">
+<h2 id="formHeading">新しい記事</h2>
+<input type="hidden" id="articleId">
+<label for="category">カテゴリー</label>
+<select id="category">
+<option value="physical">Physical</option>
+<option value="mv">MV</option>
+<option value="streaming">Streaming</option>
+<option value="download">Download</option>
+<option value="radio">Radio</option>
+<option value="karaoke">Karaoke</option>
+</select>
+<label for="title">記事タイトル</label>
+<input id="title" maxlength="180" placeholder="記事のタイトル">
+<label for="summary">一覧に表示する説明文</label>
+<textarea id="summary" maxlength="1000" placeholder="記事の概要"></textarea>
+<label>本文</label>
+<div class="toolbar">
+<button type="button" data-cmd="bold"><b>B</b></button>
+<button type="button" data-cmd="underline"><u>U</u></button>
+<button type="button" data-cmd="italic"><i>I</i></button>
+<select id="fontSize" aria-label="文字サイズ">
+<option value="3">標準</option><option value="2">小</option>
+<option value="4">大</option><option value="5">特大</option>
+</select>
+<input type="color" id="fontColor" value="#344c68" aria-label="文字色">
+<button type="button" id="linkBtn">リンク</button>
+<button type="button" id="imageBtn">画像</button>
+<button type="button" id="videoBtn">動画</button>
+</div>
+<div id="editor" contenteditable="true" role="textbox" aria-label="記事本文" aria-multiline="true"></div>
+<p class="note">文字を選択してから装飾できます。画像は画像URL、動画はYouTubeの共有URLを指定します。画像ファイルの直接アップロードは未対応です。</p>
+<div class="row">
+<button class="light" id="draftBtn">下書き保存</button>
+<button class="gold" id="publishBtn">公開する</button>
+</div>
+<button class="light" id="resetBtn" style="margin-top:10px;width:100%">新しい記事を書く</button>
+</section>
+
+<section class="panel">
+<h2>登録済みの記事</h2>
+<button class="light" id="reloadBtn">一覧を更新</button>
+<div id="articles"></div>
+</section>
+</section>
+</main>
+<script>
+(function(){
+"use strict";
+const $=id=>document.getElementById(id);
+const categories={physical:"Physical",mv:"MV",streaming:"Streaming",download:"Download",radio:"Radio",karaoke:"Karaoke"};
+let auth="";
+let articles=[];
+$("api").value=localStorage.getItem("compass_api_url")||"";
+function msg(s){$("message").textContent=s}
+function base(){
+ const s=$("api").value.trim().replace(/\/+$/,"");
+ if(!/^https:\/\//.test(s))throw Error("Worker URLは https:// から入力してください");
+ return s;
+}
+async function request(path,method="GET",data){
+ const headers={Authorization:"Bearer "+auth};
+ if(data!==undefined)headers["Content-Type"]="application/json";
+ const res=await fetch(base()+path,{method,headers,body:data===undefined?undefined:JSON.stringify(data),cache:"no-store"});
+ const obj=await res.json().catch(()=>({}));
+ if(!res.ok)throw Error(obj.error||"HTTP "+res.status);
+ return obj;
+}
+async function login(){
+ try{
+ auth=$("token").value.trim();
+ if(!auth)throw Error("管理用トークンを入力してください");
+ const result=await request("/api/login","POST");
+ if(!result.ok)throw Error("認証できませんでした");
+ localStorage.setItem("compass_api_url",base());
+ $("workspace").classList.remove("hidden");
+ msg("接続できました");
+ await load();
+ }catch(e){$("workspace").classList.add("hidden");msg("接続エラー: "+e.message)}
+}
+async function load(){
+ try{
+ const result=await request("/api/articles");
+ articles=result.articles||[];
+ render();
+ }catch(e){msg("一覧取得エラー: "+e.message)}
+}
+function render(){
+ const root=$("articles");root.replaceChildren();
+ if(!articles.length){root.textContent="記事はまだありません";return}
+ for(const a of articles){
+ const item=document.createElement("div");item.className="item";
+ const title=document.createElement("strong");title.textContent=a.title;
+ const info=document.createElement("small");
+ info.textContent=(categories[a.category]||a.category)+" / "+(a.status==="published"?"公開中":"下書き")+" / "+(a.updated_at||"").slice(0,10);
+ const buttons=document.createElement("div");buttons.className="row";
+ const edit=document.createElement("button");edit.className="light";edit.textContent="編集";
+ edit.onclick=()=>editArticle(a.id);
+ const del=document.createElement("button");del.className="danger";del.textContent="削除";
+ del.onclick=()=>deleteArticle(a.id,a.title);
+ buttons.append(edit,del);item.append(title,info,buttons);root.append(item);
+ }
+}
+function clean(html){
+ const doc=new DOMParser().parseFromString("<div>"+html+"</div>","text/html");
+ const root=doc.body.firstElementChild;
+ const allowed=new Set(["DIV","P","BR","B","STRONG","I","EM","U","S","SPAN","FONT","A","UL","OL","LI","BLOCKQUOTE","H2","H3","H4","IMG"]);
+ const walker=doc.createTreeWalker(root,NodeFilter.SHOW_ELEMENT);
+ const nodes=[];while(walker.nextNode())nodes.push(walker.currentNode);
+ for(const el of nodes.reverse()){
+ if(!el.isConnected)return root.innerHTML;
+ if(["SCRIPT","STYLE","IFRAME","OBJECT","EMBED","FORM","INPUT","SVG","MATH"].includes(el.tagName)){el.remove();continue}
+ if(!allowed.has(el.tagName)){el.replaceWith(...Array.from(el.childNodes));continue}
+ for(const at of Array.from(el.attributes)){
+ const n=at.name.toLowerCase(),v=at.value.trim();
+ if(n==="href"&&el.tagName==="A"&&/^https?:\/\//i.test(v))continue;
+ if(n==="src"&&el.tagName==="IMG"&&/^https?:\/\//i.test(v))continue;
+ if(n==="alt"&&el.tagName==="IMG")continue;
+ if(n==="size"&&el.tagName==="FONT")continue;
+ if(n==="color"&&el.tagName==="FONT"&&/^#[0-9a-f]{3,8}$/i.test(v))continue;
+ if(n==="style"){
+ const parts=v.split(";").map(x=>x.trim()).filter(x=>/^(color|font-size|font-weight|text-decoration|text-align)\s*:/i.test(x)&&!/[()\\]/.test(x));
+ if(parts.length)el.setAttribute("style",parts.join(";"));else el.removeAttribute("style");
+ continue;
+ }
+ el.removeAttribute(at.name);
+ }
+ if(el.tagName==="A")el.setAttribute("rel","noopener noreferrer");
+ }
+ return root.innerHTML;
+}
+function reset(){
+ $("articleId").value="";$("title").value="";$("summary").value="";
+ $("category").value="physical";$("editor").innerHTML="";
+ $("formHeading").textContent="新しい記事";
+}
+async function editArticle(id){
+ try{
+ const result=await request("/api/articles/"+encodeURIComponent(id));
+ const a=result.article;
+ $("articleId").value=a.id;$("category").value=a.category;
+ $("title").value=a.title;$("summary").value=a.summary||"";
+ let body={};try{body=JSON.parse(a.body_json||"{}")}catch(e){}
+ $("editor").innerHTML=clean(body.html||"");
+ $("formHeading").textContent="記事を編集";
+ window.scrollTo({top:0,behavior:"smooth"});
+ msg("記事を読み込みました");
+ }catch(e){msg("読み込みエラー: "+e.message)}
+}
+async function save(status){
+ try{
+ const title=$("title").value.trim();
+ if(!title)throw Error("記事タイトルを入力してください");
+ const data={
+ category:$("category").value,title,
+ summary:$("summary").value,
+ body_json:JSON.stringify({html:clean($("editor").innerHTML)}),
+ status
+ };
+ const id=$("articleId").value;
+ const path=id?"/api/articles/"+encodeURIComponent(id):"/api/articles";
+ const result=await request(path,id?"PUT":"POST",data);
+ $("articleId").value=result.id;
+ msg(status==="published"?"公開しました":"下書きを保存しました");
+ await load();
+ }catch(e){msg("保存エラー: "+e.message)}
+}
+async function deleteArticle(id,title){
+ if(!confirm("「"+title+"」を完全に削除しますか？"))return;
+ try{
+ await request("/api/articles/"+encodeURIComponent(id),"DELETE");
+ if($("articleId").value===id)reset();
+ msg("削除しました");await load();
+ }catch(e){msg("削除エラー: "+e.message)}
+}
+$("loginBtn").onclick=login;
+$("logoutBtn").onclick=()=>{auth="";$("token").value="";$("workspace").classList.add("hidden");msg("ログアウトしました")};
+$("reloadBtn").onclick=load;
+$("draftBtn").onclick=()=>save("draft");
+$("publishBtn").onclick=()=>save("published");
+$("resetBtn").onclick=reset;
+document.querySelectorAll("[data-cmd]").forEach(b=>b.onclick=()=>{ $("editor").focus();document.execCommand(b.dataset.cmd,false,null)});
+$("fontSize").onchange=e=>{$("editor").focus();document.execCommand("fontSize",false,e.target.value)};
+$("fontColor").oninput=e=>{$("editor").focus();document.execCommand("foreColor",false,e.target.value)};
+$("linkBtn").onclick=()=>{
+ const url=prompt("リンク先URL（https://）");
+ if(url&&/^https:\/\//i.test(url))document.execCommand("createLink",false,url);
+};
+$("imageBtn").onclick=()=>{
+ const url=prompt("画像URL（https://）");
+ if(url&&/^https:\/\//i.test(url)){const img=document.createElement("img");img.src=url;img.alt="記事画像";img.style.maxWidth="100%";$("editor").append(img)}
+};
+$("videoBtn").onclick=()=>{
+ const url=prompt("YouTube動画のURL");
+ if(!url)return;
+ let id="";
+ try{const u=new URL(url);if(u.hostname==="youtu.be")id=u.pathname.slice(1);else if(["youtube.com","www.youtube.com","m.youtube.com"].includes(u.hostname))id=u.searchParams.get("v")||(u.pathname.startsWith("/shorts/")?u.pathname.split("/")[2]:"")}catch(e){}
+ if(!/^[A-Za-z0-9_-]{11}$/.test(id)){alert("YouTube共有URLを入力してください");return}
+ const p=document.createElement("p"),a=document.createElement("a");
+ a.href="https://www.youtube.com/watch?v="+id;a.textContent="▶ YouTube動画を見る";
+ a.target="_blank";a.rel="noopener noreferrer";p.append(a);$("editor").append(p);
+};
+$("editor").addEventListener("paste",e=>{
+ e.preventDefault();
+ const t=e.clipboardData.getData("text/plain");
+ document.execCommand("insertText",false,t);
+});
+})();
+</script>
+</body>
+</html>
