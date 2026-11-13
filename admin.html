@@ -1,29 +1,255 @@
+
 <!doctype html>
-<html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><title>COMPASS | Article Manager</title>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>COMPASS | 管理画面</title>
 <style>
-:root{--navy:#344c68;--gold:#c49a42;--bg:#f3f6fa}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:#273648;font-family:-apple-system,BlinkMacSystemFont,sans-serif}header{background:var(--navy);color:#fff;padding:25px;text-align:center}h1{margin:0;letter-spacing:.15em}header small{letter-spacing:.2em}main{max-width:780px;margin:auto;padding:16px 12px 70px}.panel{background:#fff;border:1px solid #dce3ec;border-radius:16px;padding:18px;margin-bottom:16px}h2{font-size:17px;color:var(--navy)}label{display:block;font-size:13px;font-weight:700;margin:14px 0 7px}input,textarea,select{width:100%;font:inherit;border:1px solid #cbd5e1;border-radius:9px;padding:11px;background:#fff;color:#273648}textarea{min-height:75px}button{font:inherit;border:0;border-radius:9px;padding:11px 13px;cursor:pointer}button:disabled{opacity:.5}.primary{background:var(--navy);color:#fff}.gold{background:var(--gold);color:#fff}.light{background:#edf1f6;color:var(--navy)}.danger{background:#fff0f0;color:#a22}.row{display:flex;gap:8px;flex-wrap:wrap}.row button{flex:1}.hidden{display:none!important}.note{font-size:12px;color:#69798c;line-height:1.7}.remember{display:flex;gap:10px;align-items:center;padding:12px;background:#f3f6fa;border-radius:10px}.remember input{width:20px;height:20px;accent-color:var(--gold)}.mode{padding:12px;border-radius:9px;background:#edf1f6;color:var(--navy);font-weight:bold}.mode.edit{background:#fff3d9;color:#755512}.toolbar{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}.toolbar button{background:#edf1f6}.toolbar select{width:auto;max-width:180px}.toolbar input[type=color]{width:45px;padding:2px;height:40px}#editor{border:1px solid #cbd5e1;border-radius:10px;padding:14px;min-height:220px;line-height:1.8;overflow-wrap:anywhere;outline:none}#editor img,#editor video{max-width:100%;height:auto}#editor video{display:block;margin:10px 0}.item{border-top:1px solid #dce3ec;padding:13px 0}.item small{display:block;color:#728096;margin:5px 0}#message,#uploadStatus{font-size:13px;color:#344c68;white-space:pre-wrap}.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}.tabs button{padding:8px 11px;font-size:13px;background:#edf1f6;color:var(--navy)}.tabs button.active{background:var(--navy);color:#fff}
-</style></head><body>
-<header><h1>COMPASS</h1><small>ARTICLE MANAGER</small></header><main>
-<section class="panel" id="loginPanel"><h2>◆ 管理者認証</h2><label>Worker URL</label><input id="api" type="url" placeholder="https://compass-api.xxxxx.workers.dev"><label>認証キー</label><input id="token" type="password" autocomplete="off"><label class="remember"><input id="remember" type="checkbox">この端末に認証キーを保存する</label><p class="note">共用端末では保存しないでください。</p><button id="loginBtn" class="gold" style="width:100%">ログイン</button><p id="message" role="status"></p></section>
-<section id="workspace" class="hidden"><section class="panel"><div class="row"><h2 style="flex:1;margin:7px 0">記事管理</h2><button id="logoutBtn" class="light">ログアウト</button><button id="forgetBtn" class="danger">保存キー削除</button></div></section>
-<section class="panel" id="formPanel"><div id="mode" class="mode">✦ 新規記事を作成中</div><h2 id="formHeading">新しい記事</h2><label>カテゴリー</label><select id="category"><option value="physical">Physical</option><option value="mv">MV</option><option value="streaming">Streaming</option><option value="download">Download</option><option value="radio">Radio</option><option value="karaoke">Karaoke</option></select><label>記事タイトル</label><input id="title" maxlength="180" placeholder="記事のタイトル"><label>一覧に表示する説明文</label><textarea id="summary" maxlength="1000" placeholder="記事の概要"></textarea>
-<label>本文</label><div class="toolbar"><button type="button" data-cmd="bold"><b>B</b></button><button type="button" data-cmd="italic"><i>I</i></button><select id="underlineStyle" aria-label="下線の種類"><option value="">下線なし</option><option value="solid">下線 ─</option><option value="double">二重 ═</option><option value="wavy">波線 ﹏</option><option value="dotted">点線 ···</option><option value="dashed">破線 ---</option></select><select id="fontSize"><option value="3">標準</option><option value="2">小</option><option value="4">大</option><option value="5">特大</option></select><input id="fontColor" type="color" value="#344c68" aria-label="文字色"><button type="button" id="linkBtn">リンク</button><button type="button" id="imageUrlBtn">画像URL</button><button type="button" id="imageFileBtn">写真を選ぶ</button><button type="button" id="videoUrlBtn">動画URL</button><button type="button" id="videoFileBtn">動画を選ぶ</button></div>
-<input id="imageInput" class="hidden" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><input id="videoInput" class="hidden" type="file" accept="video/mp4,video/webm,video/quicktime,video/*"><div id="editor" contenteditable="true" role="textbox" aria-label="記事本文" aria-multiline="true"></div><p class="note">装飾は文字を選択してから適用。写真・動画はR2にアップロードします。1ファイル80MBまで。動画の形式によってはブラウザで再生できない場合があります。</p><p id="uploadStatus" role="status"></p><div class="row"><button id="draftBtn" class="light">下書き保存</button><button id="publishBtn" class="gold">公開する</button></div><button id="resetBtn" class="light" style="width:100%;margin-top:10px">新しい記事を書く</button></section>
-<section class="panel"><h2>登録済みの記事</h2><button id="reloadBtn" class="light">一覧を更新</button><div id="tabs" class="tabs" role="group" aria-label="カテゴリー別の記事一覧"></div><div id="articles"></div></section></section></main>
+:root{--navy:#344c68;--gold:#c49a42;--bg:#f3f6fa}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:#273648;font-family:-apple-system,BlinkMacSystemFont,sans-serif}
+header{background:var(--navy);color:white;padding:25px;text-align:center}
+h1{margin:0;letter-spacing:.15em}
+main{max-width:780px;margin:auto;padding:16px 12px 70px}
+.panel{background:white;border:1px solid #dce3ec;border-radius:16px;padding:18px;margin-bottom:16px}
+h2{font-size:17px;color:var(--navy)}
+label{display:block;font-size:13px;font-weight:700;margin:14px 0 7px}
+input,textarea,select{width:100%;font:inherit;border:1px solid #cbd5e1;border-radius:9px;padding:11px;background:white;color:#273648}
+textarea{min-height:75px}
+button{font:inherit;border:0;border-radius:9px;padding:11px 13px;cursor:pointer}
+button:disabled{opacity:.5}
+.gold{background:var(--gold);color:white}
+.light{background:#edf1f6;color:var(--navy)}
+.danger{background:#fff0f0;color:#a22}
+.row{display:flex;gap:8px;flex-wrap:wrap}
+.row button{flex:1}
+.hidden{display:none!important}
+.note{font-size:12px;color:#69798c;line-height:1.7}
+.remember{display:flex;gap:10px;align-items:center;padding:12px;background:#f3f6fa;border-radius:10px}
+.remember input{width:20px;height:20px;accent-color:var(--gold)}
+.mode{padding:12px;border-radius:9px;background:#edf1f6;color:var(--navy);font-weight:bold}
+.mode.edit{background:#fff3d9;color:#755512}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+.toolbar button{background:#edf1f6}
+.toolbar select{width:auto;max-width:180px}
+.toolbar input[type=color]{width:45px;padding:2px;height:40px}
+#editor{border:1px solid #cbd5e1;border-radius:10px;padding:14px;min-height:220px;line-height:1.8;overflow-wrap:anywhere;outline:none}
+#editor img,#editor video{max-width:100%;height:auto}
+#editor video{display:block;margin:10px 0}
+.item{border-top:1px solid #dce3ec;padding:13px 0}
+.item small{display:block;color:#728096;margin:5px 0}
+#message,#uploadStatus{font-size:13px;color:#344c68;white-space:pre-wrap}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0}
+.tabs button{padding:8px 11px;font-size:13px;background:#edf1f6;color:var(--navy)}
+.tabs button.active{background:var(--navy);color:white}
+.status-tabs{border-bottom:1px solid #dce3ec;padding-bottom:9px;margin-top:3px}
+.status-tabs button{flex:1;font-weight:700}
+.status-tabs button.active{background:var(--gold);color:white}
+</style>
+</head>
+<body>
+<header><h1>COMPASS</h1></header>
+<main>
+<section class="panel" id="loginPanel">
+<h2>◆ 管理者認証</h2>
+<label>Worker URL</label>
+<input id="api" type="url" placeholder="https://compass-api.xxxxx.workers.dev">
+<label>認証キー</label>
+<input id="token" type="password" autocomplete="off">
+<label class="remember">
+<input id="remember" type="checkbox">
+この端末に認証キーを保存する
+</label>
+<p class="note">共用端末では保存しないでください。</p>
+<button id="loginBtn" class="gold" style="width:100%">ログイン</button>
+<p id="message" role="status"></p>
+</section>
+
+<section id="workspace" class="hidden">
+<section class="panel">
+<div class="row">
+<h2 style="flex:1;margin:7px 0">記事管理</h2>
+<button id="logoutBtn" class="light">ログアウト</button>
+<button id="forgetBtn" class="danger">保存キー削除</button>
+</div>
+</section>
+
+<section class="panel" id="formPanel">
+<div id="mode" class="mode">✦ 新規記事を作成中</div>
+<h2 id="formHeading">新しい記事</h2>
+
+<label>カテゴリー</label>
+<select id="category">
+<option value="physical">Physical</option>
+<option value="mv">MV</option>
+<option value="streaming">Streaming</option>
+<option value="download">Download</option>
+<option value="radio">Radio</option>
+<option value="karaoke">Karaoke</option>
+</select>
+
+<label>記事タイトル</label>
+<input id="title" maxlength="180" placeholder="記事のタイトル">
+
+<label>一覧に表示する説明文</label>
+<textarea id="summary" maxlength="1000" placeholder="記事の概要"></textarea>
+
+<label>本文</label>
+<div class="toolbar">
+<button type="button" data-cmd="bold"><b>B</b></button>
+<button type="button" data-cmd="italic"><i>I</i></button>
+
+<select id="underlineStyle" aria-label="下線の種類">
+<option value="">下線なし</option>
+<option value="solid">下線 ─</option>
+<option value="double">二重 ═</option>
+<option value="wavy">波線 ﹏</option>
+<option value="dotted">点線 ···</option>
+<option value="dashed">破線 ---</option>
+</select>
+
+<select id="fontSize">
+<option value="3">標準</option>
+<option value="2">小</option>
+<option value="4">大</option>
+<option value="5">特大</option>
+</select>
+
+<input id="fontColor" type="color" value="#344c68" aria-label="文字色">
+<button type="button" id="linkBtn">リンク</button>
+<button type="button" id="imageUrlBtn">画像URL</button>
+<button type="button" id="imageFileBtn">写真を選ぶ</button>
+<button type="button" id="videoUrlBtn">動画URL</button>
+<button type="button" id="videoFileBtn">動画を選ぶ</button>
+</div>
+
+<input id="imageInput" class="hidden" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
+<input id="videoInput" class="hidden" type="file" accept="video/mp4,video/webm,video/quicktime,video/*">
+
+<div id="editor" contenteditable="true" role="textbox" aria-label="記事本文" aria-multiline="true"></div>
+<p id="uploadStatus" role="status"></p>
+
+<div class="row">
+<button id="draftBtn" class="light">下書き保存</button>
+<button id="publishBtn" class="gold">公開する</button>
+</div>
+<button id="resetBtn" class="light" style="width:100%;margin-top:10px">新しい記事を書く</button>
+</section>
+
+<section class="panel">
+<h2>登録済みの記事</h2>
+<button id="reloadBtn" class="light">一覧を更新</button>
+<div id="tabs" class="tabs" role="group" aria-label="カテゴリー別の記事一覧"></div>
+<div id="statusTabs" class="tabs status-tabs" role="group" aria-label="公開状態別の記事一覧"></div>
+<div id="articles"></div>
+</section>
+</section>
+</main>
+
 <script>
-(function(){'use strict';
-const $=id=>document.getElementById(id),API_KEY='compass_api_url',TOKEN_KEY='compass_admin_token';
-const names={all:'ALL',physical:'Physical',mv:'MV',streaming:'ST',download:'DL',radio:'Radio',karaoke:'Karaoke'};
-let auth='',editingId=null,editingTitle='',articles=[],busy=false,filter='all',selection=null;
+(function(){
+'use strict';
+
+const $=id=>document.getElementById(id);
+const API_KEY='compass_api_url';
+const TOKEN_KEY='compass_admin_token';
+const names={
+ all:'ALL',
+ physical:'Physical',
+ mv:'MV',
+ streaming:'ST',
+ download:'DL',
+ radio:'Radio',
+ karaoke:'Karaoke'
+};
+
+let auth='';
+let editingId=null;
+let editingTitle='';
+let articles=[];
+let busy=false;
+let filter='all';
+let statusFilter='published';
+let selection=null;
+
 $('api').value=localStorage.getItem(API_KEY)||'';
-function msg(s){$('message').textContent=s}
-function base(){const s=$('api').value.trim().replace(/\/+$/,'');if(!/^https:\/\//.test(s))throw Error('Worker URLはhttps://から入力してください');return s}
-async function req(path,method='GET',data){const headers={Authorization:'Bearer '+auth};if(data!==undefined)headers['Content-Type']='application/json';const res=await fetch(base()+path,{method,headers,body:data===undefined?undefined:JSON.stringify(data),cache:'no-store'});const obj=await res.json().catch(()=>({}));if(!res.ok)throw Error(obj.error||'HTTP '+res.status);return obj}
-async function login(auto=false){try{auth=$('token').value.trim();if(!auth)throw Error('認証キーを入力してください');const result=await req('/api/login','POST');if(!result.ok)throw Error('認証できませんでした');localStorage.setItem(API_KEY,base());if($('remember').checked)localStorage.setItem(TOKEN_KEY,auth);else localStorage.removeItem(TOKEN_KEY);$('loginPanel').classList.add('hidden');$('workspace').classList.remove('hidden');await load()}catch(e){$('workspace').classList.add('hidden');$('loginPanel').classList.remove('hidden');if(auto){auth='';msg('自動ログインできませんでした。認証キーを確認してください。 '+e.message)}else msg('ログインエラー: '+e.message)}}
-function reset(){editingId=null;editingTitle='';$('title').value='';$('summary').value='';$('category').value='physical';$('editor').innerHTML='';$('mode').className='mode';$('mode').textContent='✦ 新規記事を作成中';$('formHeading').textContent='新しい記事';$('uploadStatus').textContent=''}
+
+function msg(s){
+ $('message').textContent=s;
+}
+
+function base(){
+ const s=$('api').value.trim().replace(/\/+$/,'');
+ if(!/^https:\/\//.test(s)){
+  throw Error('Worker URLはhttps://から入力してください');
+ }
+ return s;
+}
+
+async function req(path,method='GET',data){
+ const headers={Authorization:'Bearer '+auth};
+ if(data!==undefined){
+  headers['Content-Type']='application/json';
+ }
+ const res=await fetch(base()+path,{
+  method,
+  headers,
+  body:data===undefined?undefined:JSON.stringify(data),
+  cache:'no-store'
+ });
+ const obj=await res.json().catch(()=>({}));
+ if(!res.ok){
+  throw Error(obj.error||'HTTP '+res.status);
+ }
+ return obj;
+}
+
+async function login(auto=false){
+ try{
+  auth=$('token').value.trim();
+  if(!auth)throw Error('認証キーを入力してください');
+  const result=await req('/api/login','POST');
+  if(!result.ok)throw Error('認証できませんでした');
+
+  localStorage.setItem(API_KEY,base());
+  if($('remember').checked){
+   localStorage.setItem(TOKEN_KEY,auth);
+  }else{
+   localStorage.removeItem(TOKEN_KEY);
+  }
+
+  $('loginPanel').classList.add('hidden');
+  $('workspace').classList.remove('hidden');
+  await load();
+ }catch(e){
+  $('workspace').classList.add('hidden');
+  $('loginPanel').classList.remove('hidden');
+  if(auto){
+   auth='';
+   msg('自動ログインできませんでした。認証キーを確認してください。 '+e.message);
+  }else{
+   msg('ログインエラー: '+e.message);
+  }
+ }
+}
+
+function reset(){
+ editingId=null;
+ editingTitle='';
+ $('title').value='';
+ $('summary').value='';
+ $('category').value='physical';
+ $('editor').innerHTML='';
+ $('mode').className='mode';
+ $('mode').textContent='✦ 新規記事を作成中';
+ $('formHeading').textContent='新しい記事';
+ $('uploadStatus').textContent='';
+}
+
 function logout(){
  auth='';
- // ログアウトでは保存済みキーを削除しない。次回アクセス時に自動ログイン可能。
  const saved=localStorage.getItem(TOKEN_KEY);
  $('token').value=saved||'';
  $('remember').checked=Boolean(saved);
@@ -32,34 +258,558 @@ function logout(){
  reset();
  msg(saved?'ログアウトしました。認証キーはこの端末に保存されています。':'ログアウトしました。');
 }
+
 function forgetToken(){
  if(!confirm('この端末に保存した認証キーを削除しますか？'))return;
- auth='';localStorage.removeItem(TOKEN_KEY);
- $('token').value='';$('remember').checked=false;
- $('workspace').classList.add('hidden');$('loginPanel').classList.remove('hidden');
- reset();msg('この端末の認証キーを削除しました。');
+ auth='';
+ localStorage.removeItem(TOKEN_KEY);
+ $('token').value='';
+ $('remember').checked=false;
+ $('workspace').classList.add('hidden');
+ $('loginPanel').classList.remove('hidden');
+ reset();
+ msg('この端末の認証キーを削除しました。');
 }
-async function load(){try{const result=await req('/api/articles');articles=result.articles||[];render()}catch(e){alert('記事一覧取得エラー: '+e.message)}}
-function render(){const tabs=$('tabs');tabs.replaceChildren();for(const [key,name] of Object.entries(names)){const b=document.createElement('button');b.textContent=name+' ('+(key==='all'?articles.length:articles.filter(a=>a.category===key).length)+')';b.className=key===filter?'active':'';b.onclick=()=>{filter=key;render()};tabs.append(b)}const root=$('articles');root.replaceChildren();const list=filter==='all'?articles:articles.filter(a=>a.category===filter);if(!list.length){root.textContent='このカテゴリーには記事がありません';return}for(const a of list){const item=document.createElement('div');item.className='item';const name=document.createElement('strong');name.textContent=a.title;const info=document.createElement('small');info.textContent=(names[a.category]||a.category)+' / '+(a.status==='published'?'公開中':'下書き')+' / '+(a.updated_at||'').slice(0,10);const buttons=document.createElement('div');buttons.className='row';const edit=document.createElement('button');edit.className='light';edit.textContent='編集';edit.onclick=()=>editArticle(a.id);const del=document.createElement('button');del.className='danger';del.textContent='削除';del.onclick=()=>deleteArticle(a.id,a.title);buttons.append(edit,del);item.append(name,info,buttons);root.append(item)}}
-function safeUrl(s){try{const u=new URL(s);return ['https:','http:'].includes(u.protocol)}catch{return false}}
-function clean(html){const doc=new DOMParser().parseFromString('<div>'+html+'</div>','text/html'),root=doc.body.firstElementChild;const allowed=new Set(['DIV','P','BR','B','STRONG','I','EM','U','S','SPAN','FONT','A','UL','OL','LI','BLOCKQUOTE','H2','H3','H4','IMG','VIDEO','SOURCE']);const blocked=new Set(['SCRIPT','STYLE','IFRAME','OBJECT','EMBED','FORM','INPUT','SVG','MATH','AUDIO','META','LINK']);for(const el of Array.from(root.querySelectorAll('*')).reverse()){if(!el.isConnected)continue;if(blocked.has(el.tagName)){el.remove();continue}if(!allowed.has(el.tagName)){el.replaceWith(...Array.from(el.childNodes));continue}for(const at of Array.from(el.attributes)){const n=at.name.toLowerCase(),v=at.value.trim();if(n==='href'&&el.tagName==='A'&&safeUrl(v))continue;if(n==='src'&&['IMG','VIDEO','SOURCE'].includes(el.tagName)&&safeUrl(v))continue;if(n==='alt'&&el.tagName==='IMG')continue;if(n==='controls'&&el.tagName==='VIDEO')continue;if(n==='preload'&&el.tagName==='VIDEO'&&['none','metadata','auto'].includes(v))continue;if(n==='playsinline'&&el.tagName==='VIDEO')continue;if(n==='type'&&el.tagName==='SOURCE'&&/^video\/(mp4|webm|quicktime)$/.test(v))continue;if(n==='size'&&el.tagName==='FONT'&&/^[1-7]$/.test(v))continue;if(n==='color'&&el.tagName==='FONT'&&/^#[0-9a-f]{3,8}$/i.test(v))continue;if(n==='style'){const parts=v.split(';').map(x=>x.trim()).filter(x=>/^(color|font-size|font-weight|text-align|text-decoration|text-decoration-line|text-decoration-style|text-decoration-color)\s*:/i.test(x)&&!/[()\\]/.test(x));if(parts.length)el.setAttribute('style',parts.join(';'));else el.removeAttribute('style');continue}el.removeAttribute(at.name)}if(el.tagName==='A')el.setAttribute('rel','noopener noreferrer')}return root.innerHTML}
-async function editArticle(id){if(busy)return;if(($('title').value.trim()||$('editor').textContent.trim())&&!confirm('現在入力中の内容を破棄して記事を編集しますか？'))return;try{const a=(await req('/api/articles/'+encodeURIComponent(id))).article;editingId=a.id;editingTitle=a.title;$('category').value=a.category;$('title').value=a.title;$('summary').value=a.summary||'';let body={};try{body=JSON.parse(a.body_json||'{}')}catch(e){}$('editor').innerHTML=clean(body.html||'');$('mode').className='mode edit';$('mode').textContent='⚠ 既存記事を編集中：'+a.title;$('formHeading').textContent='記事を編集';$('formPanel').scrollIntoView({behavior:'smooth',block:'start'})}catch(e){alert('読み込みエラー: '+e.message)}}
-async function save(status){if(busy)return;const title=$('title').value.trim();if(!title){alert('記事タイトルを入力してください');return}const id=editingId;if(id&&!confirm('既存の記事「'+editingTitle+'」を上書き保存します。よろしいですか？'))return;const data={category:$('category').value,title,summary:$('summary').value,body_json:JSON.stringify({html:clean($('editor').innerHTML)}),status};busy=true;$('draftBtn').disabled=true;$('publishBtn').disabled=true;try{await req(id?'/api/articles/'+encodeURIComponent(id):'/api/articles',id?'PUT':'POST',data);reset();await load();alert(status==='published'?'保存しました！次は新しい記事を登録できます。':'下書きを保存しました！次は新しい記事を登録できます。')}catch(e){alert('保存エラー: '+e.message)}finally{busy=false;$('draftBtn').disabled=false;$('publishBtn').disabled=false}}
-async function deleteArticle(id,title){if(!confirm('「'+title+'」を完全に削除しますか？'))return;try{await req('/api/articles/'+encodeURIComponent(id),'DELETE');if(editingId===id)reset();await load();alert('削除しました')}catch(e){alert('削除エラー: '+e.message)}}
-function rememberSelection(){const s=window.getSelection();if(s&&s.rangeCount&&$('editor').contains(s.anchorNode))selection=s.getRangeAt(0).cloneRange()}
-function restoreSelection(){if(selection){const s=window.getSelection();s.removeAllRanges();s.addRange(selection)}$('editor').focus()}
-function insertNode(node){restoreSelection();const s=window.getSelection();if(s&&s.rangeCount&&$('editor').contains(s.anchorNode)){const range=s.getRangeAt(0);range.deleteContents();range.insertNode(node);range.setStartAfter(node);range.collapse(true);s.removeAllRanges();s.addRange(range)}else $('editor').append(node);rememberSelection()}
-function applyUnderline(style){restoreSelection();const s=window.getSelection();if(!s||!s.rangeCount||s.isCollapsed){alert('下線を付けたい文字を選択してください');return}const range=s.getRangeAt(0);if(!$('editor').contains(range.commonAncestorContainer))return;const span=document.createElement('span');if(style){span.style.textDecorationLine='underline';span.style.textDecorationStyle=style}else{span.style.textDecoration='none'}try{span.append(range.extractContents());range.insertNode(span);s.removeAllRanges();const r=document.createRange();r.selectNodeContents(span);s.addRange(r);rememberSelection()}catch(e){alert('文字の選択範囲を少し短くして試してください')}}
-async function upload(file,kind){if(!file)return;const valid=kind==='image'?['image/jpeg','image/png','image/webp','image/gif']:['video/mp4','video/webm','video/quicktime'];if(!valid.includes(file.type)){alert('対応していない形式です。動画はMP4/WebM/MOV、画像はJPEG/PNG/WebP/GIFにしてください');return}if(file.size>80*1024*1024){alert('ファイルは80MB以下にしてください');return}const b=kind==='image'?$('imageFileBtn'):$('videoFileBtn');b.disabled=true;$('uploadStatus').textContent='アップロード中：'+file.name+'（完了まで保存しないでください）';try{const form=new FormData();form.append('file',file);const res=await fetch(base()+'/api/upload',{method:'POST',headers:{Authorization:'Bearer '+auth},body:form});const obj=await res.json().catch(()=>({}));if(!res.ok)throw Error(obj.error||'HTTP '+res.status);if(kind==='image'){const img=document.createElement('img');img.src=obj.url;img.alt='記事画像';insertNode(img)}else{const v=document.createElement('video');v.src=obj.url;v.controls=true;v.preload='metadata';v.setAttribute('playsinline','');insertNode(v)}$('uploadStatus').textContent='アップロード完了：'+file.name}catch(e){$('uploadStatus').textContent='アップロード失敗：'+e.message;alert('アップロードエラー: '+e.message)}finally{b.disabled=false}}
-$('loginBtn').onclick=()=>login(false);$('logoutBtn').onclick=logout;$('forgetBtn').onclick=forgetToken;$('reloadBtn').onclick=load;$('draftBtn').onclick=()=>save('draft');$('publishBtn').onclick=()=>save('published');$('resetBtn').onclick=()=>{if(($('title').value.trim()||$('editor').textContent.trim()||$('editor').querySelector('img,video'))&&!confirm('入力中の内容を破棄して新しい記事を書きますか？'))return;reset()};
-$('editor').addEventListener('mouseup',rememberSelection);$('editor').addEventListener('keyup',rememberSelection);$('editor').addEventListener('touchend',()=>setTimeout(rememberSelection,100));
-document.querySelectorAll('[data-cmd]').forEach(b=>b.onclick=()=>{restoreSelection();document.execCommand(b.dataset.cmd,false,null)});
-$('underlineStyle').onchange=e=>{applyUnderline(e.target.value);e.target.value=''};$('fontSize').onchange=e=>{restoreSelection();document.execCommand('fontSize',false,e.target.value)};$('fontColor').oninput=e=>{restoreSelection();document.execCommand('foreColor',false,e.target.value)};
-$('linkBtn').onclick=()=>{const url=prompt('リンク先URL（https://）');if(url&&safeUrl(url)){restoreSelection();document.execCommand('createLink',false,url)}};
-$('imageUrlBtn').onclick=()=>{const url=prompt('画像URL（https://）');if(url&&safeUrl(url)){const img=document.createElement('img');img.src=url;img.alt='記事画像';insertNode(img)}};
-$('videoUrlBtn').onclick=()=>{const url=prompt('YouTube動画または動画ファイルのURL');if(!url)return;let id='';try{const u=new URL(url);if(u.hostname==='youtu.be')id=u.pathname.slice(1);else if(['youtube.com','www.youtube.com','m.youtube.com'].includes(u.hostname))id=u.searchParams.get('v')||(u.pathname.startsWith('/shorts/')?u.pathname.split('/')[2]:'')}catch(e){}if(/^[A-Za-z0-9_-]{11}$/.test(id)){const p=document.createElement('p'),a=document.createElement('a');a.href='https://www.youtube.com/watch?v='+id;a.textContent='▶ YouTube動画を見る';a.target='_blank';a.rel='noopener noreferrer';p.append(a);insertNode(p)}else if(safeUrl(url)&&/\.(mp4|webm|mov)(\?.*)?$/i.test(url)){const v=document.createElement('video');v.src=url;v.controls=true;v.preload='metadata';insertNode(v)}else alert('YouTube共有URLか、MP4/WebM/MOVの直接URLを入力してください')};
-$('imageFileBtn').onclick=()=>{$('imageInput').click()};$('videoFileBtn').onclick=()=>{$('videoInput').click()};$('imageInput').onchange=e=>{upload(e.target.files[0],'image');e.target.value=''};$('videoInput').onchange=e=>{upload(e.target.files[0],'video');e.target.value=''};
-$('editor').addEventListener('paste',e=>{e.preventDefault();document.execCommand('insertText',false,e.clipboardData.getData('text/plain'))});
-const saved=localStorage.getItem(TOKEN_KEY);if(saved){$('token').value=saved;$('remember').checked=true;if($('api').value.trim())login(true)}
+
+async function load(){
+ try{
+  const result=await req('/api/articles');
+  articles=result.articles||[];
+  render();
+ }catch(e){
+  alert('記事一覧取得エラー: '+e.message);
+ }
+}
+
+function render(){
+ const categoryTabs=$('tabs');
+ categoryTabs.replaceChildren();
+
+ for(const [key,name] of Object.entries(names)){
+  const count=articles.filter(a=>
+   (key==='all'||a.category===key)&&a.status===statusFilter
+  ).length;
+
+  const b=document.createElement('button');
+  b.textContent=name+' ('+count+')';
+  b.className=key===filter?'active':'';
+  b.setAttribute('aria-pressed',String(key===filter));
+  b.onclick=()=>{
+   filter=key;
+   render();
+  };
+  categoryTabs.append(b);
+ }
+
+ const statusTabs=$('statusTabs');
+ statusTabs.replaceChildren();
+
+ for(const [key,name] of [
+  ['published','公開中'],
+  ['draft','下書き']
+ ]){
+  const count=articles.filter(a=>
+   a.status===key&&(filter==='all'||a.category===filter)
+  ).length;
+
+  const b=document.createElement('button');
+  b.textContent=name+' ('+count+')';
+  b.className=key===statusFilter?'active':'';
+  b.setAttribute('aria-pressed',String(key===statusFilter));
+  b.onclick=()=>{
+   statusFilter=key;
+   render();
+  };
+  statusTabs.append(b);
+ }
+
+ const root=$('articles');
+ root.replaceChildren();
+
+ const list=articles.filter(a=>
+  (filter==='all'||a.category===filter)&&a.status===statusFilter
+ );
+
+ if(!list.length){
+  root.textContent=statusFilter==='draft'
+   ?'このカテゴリーに下書きはありません'
+   :'このカテゴリーに公開中の記事はありません';
+  return;
+ }
+
+ for(const a of list){
+  const item=document.createElement('div');
+  item.className='item';
+
+  const name=document.createElement('strong');
+  name.textContent=a.title;
+
+  const info=document.createElement('small');
+  info.textContent=
+   (names[a.category]||a.category)+' / '+
+   (a.status==='published'?'公開中':'下書き')+' / '+
+   (a.updated_at||'').slice(0,10);
+
+  const buttons=document.createElement('div');
+  buttons.className='row';
+
+  const edit=document.createElement('button');
+  edit.className='light';
+  edit.textContent='編集';
+  edit.onclick=()=>editArticle(a.id);
+
+  const del=document.createElement('button');
+  del.className='danger';
+  del.textContent='削除';
+  del.onclick=()=>deleteArticle(a.id,a.title);
+
+  buttons.append(edit,del);
+  item.append(name,info,buttons);
+  root.append(item);
+ }
+}
+
+function safeUrl(s){
+ try{
+  const u=new URL(s);
+  return ['https:','http:'].includes(u.protocol);
+ }catch{
+  return false;
+ }
+}
+
+function clean(html){
+ const doc=new DOMParser().parseFromString('<div>'+html+'</div>','text/html');
+ const root=doc.body.firstElementChild;
+ const allowed=new Set([
+  'DIV','P','BR','B','STRONG','I','EM','U','S',
+  'SPAN','FONT','A','UL','OL','LI','BLOCKQUOTE',
+  'H2','H3','H4','IMG','VIDEO','SOURCE'
+ ]);
+ const blocked=new Set([
+  'SCRIPT','STYLE','IFRAME','OBJECT','EMBED',
+  'FORM','INPUT','SVG','MATH','AUDIO','META','LINK'
+ ]);
+
+ for(const el of Array.from(root.querySelectorAll('*')).reverse()){
+  if(!el.isConnected)continue;
+
+  if(blocked.has(el.tagName)){
+   el.remove();
+   continue;
+  }
+
+  if(!allowed.has(el.tagName)){
+   el.replaceWith(...Array.from(el.childNodes));
+   continue;
+  }
+
+  for(const at of Array.from(el.attributes)){
+   const n=at.name.toLowerCase();
+   const v=at.value.trim();
+
+   if(n==='href'&&el.tagName==='A'&&safeUrl(v))continue;
+   if(n==='src'&&['IMG','VIDEO','SOURCE'].includes(el.tagName)&&safeUrl(v))continue;
+   if(n==='alt'&&el.tagName==='IMG')continue;
+   if(n==='controls'&&el.tagName==='VIDEO')continue;
+   if(n==='preload'&&el.tagName==='VIDEO'&&['none','metadata','auto'].includes(v))continue;
+   if(n==='playsinline'&&el.tagName==='VIDEO')continue;
+   if(n==='type'&&el.tagName==='SOURCE'&&/^video\/(mp4|webm|quicktime)$/.test(v))continue;
+   if(n==='size'&&el.tagName==='FONT'&&/^[1-7]$/.test(v))continue;
+   if(n==='color'&&el.tagName==='FONT'&&/^#[0-9a-f]{3,8}$/i.test(v))continue;
+
+   if(n==='style'){
+    const parts=v.split(';')
+     .map(x=>x.trim())
+     .filter(x=>
+      /^(color|font-size|font-weight|text-align|text-decoration|text-decoration-line|text-decoration-style|text-decoration-color)\s*:/i.test(x)
+      && !/[()\\]/.test(x)
+     );
+    if(parts.length){
+     el.setAttribute('style',parts.join(';'));
+    }else{
+     el.removeAttribute('style');
+    }
+    continue;
+   }
+
+   el.removeAttribute(at.name);
+  }
+
+  if(el.tagName==='A'){
+   el.setAttribute('rel','noopener noreferrer');
+  }
+ }
+
+ return root.innerHTML;
+}
+
+async function editArticle(id){
+ if(busy)return;
+
+ if(
+  ($('title').value.trim()||$('editor').textContent.trim())
+  &&!confirm('現在入力中の内容を破棄して記事を編集しますか？')
+ )return;
+
+ try{
+  const a=(await req('/api/articles/'+encodeURIComponent(id))).article;
+  editingId=a.id;
+  editingTitle=a.title;
+  $('category').value=a.category;
+  $('title').value=a.title;
+  $('summary').value=a.summary||'';
+
+  let body={};
+  try{
+   body=JSON.parse(a.body_json||'{}');
+  }catch(e){}
+
+  $('editor').innerHTML=clean(body.html||'');
+  $('mode').className='mode edit';
+  $('mode').textContent='⚠ 既存記事を編集中：'+a.title;
+  $('formHeading').textContent='記事を編集';
+  $('formPanel').scrollIntoView({
+   behavior:'smooth',
+   block:'start'
+  });
+ }catch(e){
+  alert('読み込みエラー: '+e.message);
+ }
+}
+
+async function save(status){
+ if(busy)return;
+
+ const title=$('title').value.trim();
+ if(!title){
+  alert('記事タイトルを入力してください');
+  return;
+ }
+
+ const id=editingId;
+ if(id&&!confirm('既存の記事「'+editingTitle+'」を上書き保存します。よろしいですか？')){
+  return;
+ }
+
+ const data={
+  category:$('category').value,
+  title,
+  summary:$('summary').value,
+  body_json:JSON.stringify({html:clean($('editor').innerHTML)}),
+  status
+ };
+
+ busy=true;
+ $('draftBtn').disabled=true;
+ $('publishBtn').disabled=true;
+
+ try{
+  await req(
+   id?'/api/articles/'+encodeURIComponent(id):'/api/articles',
+   id?'PUT':'POST',
+   data
+  );
+
+  reset();
+  statusFilter=status;
+  filter='all';
+  await load();
+
+  alert(status==='published'
+   ?'保存しました！次は新しい記事を登録できます。'
+   :'下書きを保存しました！次は新しい記事を登録できます。'
+  );
+ }catch(e){
+  alert('保存エラー: '+e.message);
+ }finally{
+  busy=false;
+  $('draftBtn').disabled=false;
+  $('publishBtn').disabled=false;
+ }
+}
+
+async function deleteArticle(id,title){
+ if(!confirm('「'+title+'」を完全に削除しますか？'))return;
+
+ try{
+  await req('/api/articles/'+encodeURIComponent(id),'DELETE');
+  if(editingId===id)reset();
+  await load();
+  alert('削除しました');
+ }catch(e){
+  alert('削除エラー: '+e.message);
+ }
+}
+
+function rememberSelection(){
+ const s=window.getSelection();
+ if(s&&s.rangeCount&&$('editor').contains(s.anchorNode)){
+  selection=s.getRangeAt(0).cloneRange();
+ }
+}
+
+function restoreSelection(){
+ if(selection){
+  const s=window.getSelection();
+  s.removeAllRanges();
+  s.addRange(selection);
+ }
+ $('editor').focus();
+}
+
+function insertNode(node){
+ restoreSelection();
+ const s=window.getSelection();
+
+ if(s&&s.rangeCount&&$('editor').contains(s.anchorNode)){
+  const range=s.getRangeAt(0);
+  range.deleteContents();
+  range.insertNode(node);
+  range.setStartAfter(node);
+  range.collapse(true);
+  s.removeAllRanges();
+  s.addRange(range);
+ }else{
+  $('editor').append(node);
+ }
+
+ rememberSelection();
+}
+
+function applyUnderline(style){
+ restoreSelection();
+ const s=window.getSelection();
+
+ if(!s||!s.rangeCount||s.isCollapsed){
+  alert('下線を付けたい文字を選択してください');
+  return;
+ }
+
+ const range=s.getRangeAt(0);
+ if(!$('editor').contains(range.commonAncestorContainer))return;
+
+ const span=document.createElement('span');
+
+ if(style){
+  span.style.textDecorationLine='underline';
+  span.style.textDecorationStyle=style;
+ }else{
+  span.style.textDecoration='none';
+ }
+
+ try{
+  span.append(range.extractContents());
+  range.insertNode(span);
+  s.removeAllRanges();
+  const r=document.createRange();
+  r.selectNodeContents(span);
+  s.addRange(r);
+  rememberSelection();
+ }catch(e){
+  alert('文字の選択範囲を少し短くして試してください');
+ }
+}
+
+async function upload(file,kind){
+ if(!file)return;
+
+ const valid=kind==='image'
+  ?['image/jpeg','image/png','image/webp','image/gif']
+  :['video/mp4','video/webm','video/quicktime'];
+
+ if(!valid.includes(file.type)){
+  alert('対応していない形式です。動画はMP4/WebM/MOV、画像はJPEG/PNG/WebP/GIFにしてください');
+  return;
+ }
+
+ if(file.size>80*1024*1024){
+  alert('ファイルは80MB以下にしてください');
+  return;
+ }
+
+ const b=kind==='image'?$('imageFileBtn'):$('videoFileBtn');
+ b.disabled=true;
+ $('uploadStatus').textContent='アップロード中：'+file.name+'（完了まで保存しないでください）';
+
+ try{
+  const form=new FormData();
+  form.append('file',file);
+
+  const res=await fetch(base()+'/api/upload',{
+   method:'POST',
+   headers:{Authorization:'Bearer '+auth},
+   body:form
+  });
+
+  const obj=await res.json().catch(()=>({}));
+  if(!res.ok){
+   throw Error(obj.error||'HTTP '+res.status);
+  }
+
+  if(kind==='image'){
+   const img=document.createElement('img');
+   img.src=obj.url;
+   img.alt='記事画像';
+   insertNode(img);
+  }else{
+   const v=document.createElement('video');
+   v.src=obj.url;
+   v.controls=true;
+   v.preload='metadata';
+   v.setAttribute('playsinline','');
+   insertNode(v);
+  }
+
+  $('uploadStatus').textContent='アップロード完了：'+file.name;
+ }catch(e){
+  $('uploadStatus').textContent='アップロード失敗：'+e.message;
+  alert('アップロードエラー: '+e.message);
+ }finally{
+  b.disabled=false;
+ }
+}
+
+$('loginBtn').onclick=()=>login(false);
+$('logoutBtn').onclick=logout;
+$('forgetBtn').onclick=forgetToken;
+$('reloadBtn').onclick=load;
+$('draftBtn').onclick=()=>save('draft');
+$('publishBtn').onclick=()=>save('published');
+
+$('resetBtn').onclick=()=>{
+ if(
+  (
+   $('title').value.trim()
+   ||$('editor').textContent.trim()
+   ||$('editor').querySelector('img,video')
+  )
+  &&!confirm('入力中の内容を破棄して新しい記事を書きますか？')
+ )return;
+ reset();
+};
+
+$('editor').addEventListener('mouseup',rememberSelection);
+$('editor').addEventListener('keyup',rememberSelection);
+$('editor').addEventListener('touchend',()=>{
+ setTimeout(rememberSelection,100);
+});
+
+document.querySelectorAll('[data-cmd]').forEach(b=>{
+ b.onclick=()=>{
+  restoreSelection();
+  document.execCommand(b.dataset.cmd,false,null);
+ };
+});
+
+$('underlineStyle').onchange=e=>{
+ applyUnderline(e.target.value);
+ e.target.value='';
+};
+
+$('fontSize').onchange=e=>{
+ restoreSelection();
+ document.execCommand('fontSize',false,e.target.value);
+};
+
+$('fontColor').oninput=e=>{
+ restoreSelection();
+ document.execCommand('foreColor',false,e.target.value);
+};
+
+$('linkBtn').onclick=()=>{
+ const url=prompt('リンク先URL（https://）');
+ if(url&&safeUrl(url)){
+  restoreSelection();
+  document.execCommand('createLink',false,url);
+ }
+};
+
+$('imageUrlBtn').onclick=()=>{
+ const url=prompt('画像URL（https://）');
+ if(url&&safeUrl(url)){
+  const img=document.createElement('img');
+  img.src=url;
+  img.alt='記事画像';
+  insertNode(img);
+ }
+};
+
+$('videoUrlBtn').onclick=()=>{
+ const url=prompt('YouTube動画または動画ファイルのURL');
+ if(!url)return;
+
+ let id='';
+ try{
+  const u=new URL(url);
+  if(u.hostname==='youtu.be'){
+   id=u.pathname.slice(1);
+  }else if([
+   'youtube.com',
+   'www.youtube.com',
+   'm.youtube.com'
+  ].includes(u.hostname)){
+   id=u.searchParams.get('v')
+    ||(u.pathname.startsWith('/shorts/')
+     ?u.pathname.split('/')[2]:'');
+  }
+ }catch(e){}
+
+ if(/^[A-Za-z0-9_-]{11}$/.test(id)){
+  const p=document.createElement('p');
+  const a=document.createElement('a');
+  a.href='https://www.youtube.com/watch?v='+id;
+  a.textContent='▶ YouTube動画を見る';
+  a.target='_blank';
+  a.rel='noopener noreferrer';
+  p.append(a);
+  insertNode(p);
+ }else if(safeUrl(url)&&/\.(mp4|webm|mov)(\?.*)?$/i.test(url)){
+  const v=document.createElement('video');
+  v.src=url;
+  v.controls=true;
+  v.preload='metadata';
+  insertNode(v);
+ }else{
+  alert('YouTube共有URLか、MP4/WebM/MOVの直接URLを入力してください');
+ }
+};
+
+$('imageFileBtn').onclick=()=>{
+ $('imageInput').click();
+};
+
+$('videoFileBtn').onclick=()=>{
+ $('videoInput').click();
+};
+
+$('imageInput').onchange=e=>{
+ upload(e.target.files[0],'image');
+ e.target.value='';
+};
+
+$('videoInput').onchange=e=>{
+ upload(e.target.files[0],'video');
+ e.target.value='';
+};
+
+$('editor').addEventListener('paste',e=>{
+ e.preventDefault();
+ document.execCommand(
+  'insertText',
+  false,
+  e.clipboardData.getData('text/plain')
+ );
+});
+
+const saved=localStorage.getItem(TOKEN_KEY);
+if(saved){
+ $('token').value=saved;
+ $('remember').checked=true;
+ if($('api').value.trim())login(true);
+}
+
 })();
-</script></body></html>
+</script>
+</body>
+</html>
