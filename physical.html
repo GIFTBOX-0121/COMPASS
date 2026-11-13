@@ -1,1 +1,54 @@
 
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Physical | COMPASS</title>
+<link rel="stylesheet" href="category.css">
+</head>
+
+<body data-category="physical">
+
+<header class="site-header">
+  <a href="index.html" class="site-logo">compass</a>
+</header>
+
+<main>
+  <a href="index.html" class="back-link">
+    ← カテゴリー一覧に戻る
+  </a>
+
+  <div class="category-heading">
+    <h1 id="categoryTitle">Physical</h1>
+    <div class="heading-rule"></div>
+  </div>
+
+  <div class="search-box" role="search">
+    <svg aria-hidden="true" width="20" height="20"
+         viewBox="0 0 24 24" fill="none"
+         stroke="currentColor" stroke-width="1.7"
+         stroke-linecap="round">
+      <circle cx="10.8" cy="10.8" r="7.2"></circle>
+      <path d="m16.2 16.2 4.6 4.6"></path>
+    </svg>
+
+    <input
+      id="categorySearch"
+      type="search"
+      autocomplete="off"
+      aria-label="カテゴリー内検索"
+      placeholder="このカテゴリーから検索（複数ワード可）"
+    >
+  </div>
+
+  <div id="articleList" class="article-list" aria-live="polite">
+    <p class="message">記事を読み込み中…</p>
+  </div>
+</main>
+
+<script src="category.js"></script>
+</body>
+</html>
+
