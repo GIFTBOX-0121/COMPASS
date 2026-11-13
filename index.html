@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -294,11 +295,68 @@ body {
     font-size: 34px;
   }
 }
+
+/* 全体検索結果 */
+.search-results {
+  max-width: 820px;
+  margin: 0 auto 30px;
+}
+.search-results[hidden],
+.cats[hidden] {
+  display: none !important;
+}
+.search-count {
+  font-size: 13px;
+  color: #65758a;
+  margin: 0 0 12px;
+}
+.search-result {
+  display: block;
+  text-decoration: none;
+  color: var(--ink);
+  background: #fff;
+  border: 2px solid #d0d9e1;
+  border-radius: 15px;
+  padding: 17px 20px;
+  margin-bottom: 11px;
+}
+.search-result:hover {
+  background: #f5f8fb;
+}
+.search-result:focus-visible {
+  outline: 3px solid #8b9ba9;
+  outline-offset: 3px;
+}
+.result-category {
+  display: block;
+  font-size: 12px;
+  color: #344c68;
+  font-weight: 700;
+  margin-bottom: 7px;
+}
+.result-title {
+  display: block;
+  font-size: 18px;
+  font-weight: 700;
+}
+.result-summary {
+  margin: 7px 0 0;
+  color: #68788a;
+  font-size: 14px;
+  line-height: 1.7;
+}
+.search-message {
+  font-size: 14px;
+  line-height: 1.8;
+  color: #68788a;
+}
 </style>
 </head>
+
 <body>
 <div class="stage v06 v36 shorter-bottom">
 <div class="inner">
+
 <header class="howto-masthead">
   <div class="howto-star-row" aria-hidden="true">
     <span class="howto-rule"></span>
@@ -314,6 +372,7 @@ body {
   </div>
   <h1 class="compass-signature">compass</h1>
 </header>
+
 <div class="search" role="search">
   <svg aria-hidden="true" fill="none"
        height="20" width="20"
@@ -325,14 +384,23 @@ body {
     <path d="m16.2 16.2 4.6 4.6"></path>
   </svg>
   <input
+    id="globalSearch"
     aria-label="全体から検索"
     autocomplete="off"
     placeholder="全体から検索（複数ワード可）"
     type="search"
-  />
+  >
 </div>
-<div class="cats">
-  <div aria-label="Physical (CD)" class="cat" role="group">
+
+<div id="searchResults"
+     class="search-results"
+     aria-live="polite"
+     hidden></div>
+
+<div class="cats" id="categories">
+
+  <a aria-label="Physical (CD)"
+     class="cat" href="physical.html">
     <span class="glyph">
       <svg aria-hidden="true" class="motif-01"
            viewBox="0 0 120 120"
@@ -344,8 +412,10 @@ body {
       </svg>
     </span>
     <span class="name">Physical <span class="qualifier">(CD)</span></span>
-  </div>
-  <div aria-label="Music Video (MV)" class="cat" role="group">
+  </a>
+
+  <a aria-label="Music Video (MV)"
+     class="cat" href="mv.html">
     <span class="glyph">
       <svg aria-hidden="true" class="motif-01"
            viewBox="0 0 120 120"
@@ -355,8 +425,10 @@ body {
       </svg>
     </span>
     <span class="name">Music Video <span class="qualifier">(MV)</span></span>
-  </div>
-  <div aria-label="Streaming (ST)" class="cat" role="group">
+  </a>
+
+  <a aria-label="Streaming (ST)"
+     class="cat" href="streaming.html">
     <span class="glyph">
       <svg aria-hidden="true" class="motif-01"
            viewBox="0 0 120 120"
@@ -367,8 +439,10 @@ body {
       </svg>
     </span>
     <span class="name">Streaming <span class="qualifier">(ST)</span></span>
-  </div>
-  <div aria-label="Download (DL)" class="cat" role="group">
+  </a>
+
+  <a aria-label="Download (DL)"
+     class="cat" href="download.html">
     <span class="glyph">
       <svg aria-hidden="true" class="motif-01"
            viewBox="0 0 120 120"
@@ -378,8 +452,10 @@ body {
       </svg>
     </span>
     <span class="name">Download <span class="qualifier">(DL)</span></span>
-  </div>
-  <div aria-label="Radio" class="cat" role="group">
+  </a>
+
+  <a aria-label="Radio"
+     class="cat" href="radio.html">
     <span class="glyph">
       <svg aria-hidden="true" class="motif-01"
            viewBox="0 0 120 120"
@@ -391,8 +467,10 @@ body {
       </svg>
     </span>
     <span class="name">Radio</span>
-  </div>
-  <div aria-label="Karaoke" class="cat" role="group">
+  </a>
+
+  <a aria-label="Karaoke"
+     class="cat" href="karaoke.html">
     <span class="glyph">
       <svg aria-hidden="true" class="motif-01"
            viewBox="0 0 120 120"
@@ -405,9 +483,155 @@ body {
       </svg>
     </span>
     <span class="name">Karaoke</span>
-  </div>
+  </a>
+
+  <a aria-label="Other"
+     class="cat" href="other.html">
+    <span class="glyph">
+      <svg aria-hidden="true" class="motif-01"
+           viewBox="0 0 120 120"
+           xmlns="http://www.w3.org/2000/svg">
+        <polygon points="60,13 73,44 107,47 81,69 89,103 60,85 31,103 39,69 13,47 47,44"></polygon>
+      </svg>
+    </span>
+    <span class="name">Other</span>
+  </a>
+
 </div>
 </div>
 </div>
+
+<script>
+const API =
+  'https://compass-api.starsx0601.workers.dev';
+
+const categoryNames = {
+  physical: 'Physical',
+  mv: 'Music Video',
+  streaming: 'Streaming',
+  download: 'Download',
+  radio: 'Radio',
+  karaoke: 'Karaoke',
+  other: 'Other'
+};
+
+const input = document.getElementById('globalSearch');
+const results = document.getElementById('searchResults');
+const categories = document.getElementById('categories');
+
+let articles = [];
+let loadError = false;
+let loading = true;
+
+function escapeHTML(value) {
+  return String(value ?? '').replace(
+    /[&<>"']/g,
+    char => ({
+      '&': '&amp;',
+      '<': '&lt;',
+      '>': '&gt;',
+      '"': '&quot;',
+      "'": '&#39;'
+    })[char]
+  );
+}
+
+function renderSearch() {
+  const query = input.value.trim();
+
+  if (!query) {
+    results.hidden = true;
+    categories.hidden = false;
+    results.replaceChildren();
+    return;
+  }
+
+  results.hidden = false;
+  categories.hidden = true;
+
+  if (loading) {
+    results.innerHTML =
+      '<p class="search-message">記事を検索する準備をしています…</p>';
+    return;
+  }
+
+  if (loadError) {
+    results.innerHTML =
+      '<p class="search-message">記事を取得できませんでした。ページを再読み込みしてください。</p>';
+    return;
+  }
+
+  const words = query
+    .toLocaleLowerCase()
+    .split(/\s+/)
+    .filter(Boolean);
+
+  const filtered = articles.filter(article => {
+    const text = [
+      article.title,
+      article.summary,
+      categoryNames[article.category] || article.category
+    ].join(' ').toLocaleLowerCase();
+
+    return words.every(word => text.includes(word));
+  });
+
+  if (!filtered.length) {
+    results.innerHTML =
+      '<p class="search-count">検索結果 0件</p>' +
+      '<p class="search-message">該当する記事はありません。</p>';
+    return;
+  }
+
+  const cards = filtered.map(article => {
+    const category =
+      categoryNames[article.category] || article.category;
+
+    return `
+      <a class="search-result"
+         href="article.html?id=${encodeURIComponent(article.id)}">
+        <span class="result-category">${escapeHTML(category)}</span>
+        <span class="result-title">${escapeHTML(article.title)}</span>
+        <p class="result-summary">${escapeHTML(article.summary)}</p>
+      </a>
+    `;
+  }).join('');
+
+  results.innerHTML =
+    '<p class="search-count">検索結果 ' +
+    filtered.length +
+    '件</p>' +
+    cards;
+}
+
+async function loadArticles() {
+  try {
+    const response = await fetch(
+      API + '/api/public/articles',
+      { cache: 'no-store' }
+    );
+
+    if (!response.ok) {
+      throw new Error('HTTP ' + response.status);
+    }
+
+    const data = await response.json();
+    articles = Array.isArray(data.articles)
+      ? data.articles
+      : [];
+
+    loadError = false;
+  } catch (error) {
+    loadError = true;
+  } finally {
+    loading = false;
+    renderSearch();
+  }
+}
+
+input.addEventListener('input', renderSearch);
+
+loadArticles();
+</script>
 </body>
 </html>
