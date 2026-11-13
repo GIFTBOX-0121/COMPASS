@@ -1,0 +1,636 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>記事 | COMPASS</title>
+
+<style>
+:root {
+  color-scheme: light;
+  --navy: #344c68;
+  --gold: #c49a42;
+  --ink: #2c353e;
+  --edge: #d9dfe6;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #fafbfc;
+  color: var(--ink);
+  font-family: Arial, "Helvetica Neue",
+    "Hiragino Kaku Gothic ProN",
+    "Noto Sans JP", sans-serif;
+}
+
+.site-header {
+  padding: 28px 16px 20px;
+  text-align: center;
+  background: linear-gradient(
+    90deg,
+    #eef2f6 0 10%,
+    #fff 10% 90%,
+    #eef2f6 90%
+  );
+}
+
+.site-logo {
+  color: var(--navy);
+  font-family: "Snell Roundhand",
+    "Apple Chancery", "Brush Script MT",
+    "Segoe Script", cursive;
+  font-size: 42px;
+  font-style: italic;
+  text-decoration: none;
+}
+
+main {
+  width: min(100% - 32px, 760px);
+  margin: 0 auto;
+  padding: 25px 0 80px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 25px;
+  color: var(--navy);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.article-panel {
+  background: #fff;
+  border: 1px solid #d9e1e9;
+  border-radius: 16px;
+  padding: clamp(20px, 5vw, 38px);
+  box-shadow: 0 8px 25px #8997a610;
+}
+
+.article-category {
+  display: inline-block;
+  margin-bottom: 14px;
+  padding: 6px 13px;
+  color: var(--navy);
+  background: #eef2f6;
+  border-radius: 30px;
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.article-title {
+  margin: 0;
+  color: var(--navy);
+  font-size: clamp(23px, 5vw, 34px);
+  line-height: 1.5;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.article-summary {
+  margin: 15px 0 0;
+  color: #647589;
+  font-size: 14px;
+  line-height: 1.8;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.update-label {
+  display: inline-block;
+  margin-top: 14px;
+  color: #c02e42;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.article-divider {
+  height: 1px;
+  margin: 26px 0;
+  background: #dce3eb;
+}
+
+.article-body {
+  font-size: 15px;
+  line-height: 1.9;
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+
+.article-body p {
+  margin: 0 0 1.1em;
+}
+
+.article-body h2,
+.article-body h3,
+.article-body h4 {
+  color: var(--navy);
+  line-height: 1.5;
+  margin: 1.5em 0 .6em;
+}
+
+.article-body a {
+  color: #315c94;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+.article-body img,
+.article-body video {
+  display: inline-block;
+  max-width: 100%;
+  height: auto;
+  border-radius: 9px;
+  vertical-align: middle;
+}
+
+.article-body video {
+  display: block;
+  margin: 12px 0;
+}
+
+.article-body img {
+  margin: 5px 0;
+}
+
+.article-body blockquote {
+  margin: 16px 0;
+  padding: 12px 18px;
+  border-left: 3px solid var(--gold);
+  background: #f5f7fa;
+}
+
+.article-body ul,
+.article-body ol {
+  padding-left: 1.5em;
+}
+
+.article-body font[size="2"] {
+  font-size: .85em;
+}
+
+.article-body font[size="4"] {
+  font-size: 1.2em;
+}
+
+.article-body font[size="5"] {
+  font-size: 1.5em;
+}
+
+.bottom-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 25px;
+}
+
+.bottom-nav a {
+  flex: 1;
+  min-width: 135px;
+  padding: 14px 12px;
+  border: 1px solid #d0d9e1;
+  border-radius: 12px;
+  background: #fff;
+  color: var(--navy);
+  text-decoration: none;
+  text-align: center;
+  font-size: 14px;
+}
+
+.message {
+  padding: 35px 15px;
+  color: #69798c;
+  text-align: center;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+@media (max-width: 480px) {
+  .site-header {
+    padding-top: 22px;
+  }
+
+  .site-logo {
+    font-size: 36px;
+  }
+
+  .article-panel {
+    padding: 21px 17px;
+  }
+
+  .article-body {
+    font-size: 14px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<header class="site-header">
+  <a href="index.html" class="site-logo">compass</a>
+</header>
+
+<main>
+
+  <a id="topBack" href="index.html" class="back-link">
+    ← カテゴリー一覧に戻る
+  </a>
+
+  <p id="message" class="message" role="status">
+    記事を読み込み中…
+  </p>
+
+  <article id="articlePanel" class="article-panel" hidden>
+
+    <a id="articleCategory"
+       class="article-category"
+       href="index.html"></a>
+
+    <h1 id="articleTitle" class="article-title"></h1>
+
+    <p id="articleSummary"
+       class="article-summary"
+       hidden></p>
+
+    <span id="updateLabel"
+          class="update-label"
+          hidden></span>
+
+    <div class="article-divider"></div>
+
+    <div id="articleBody" class="article-body"></div>
+
+  </article>
+
+  <nav id="bottomNav" class="bottom-nav" hidden>
+    <a id="bottomBack" href="index.html">
+      ← 記事一覧に戻る
+    </a>
+    <a href="index.html">
+      COMPASS トップ
+    </a>
+  </nav>
+
+</main>
+
+<script>
+(() => {
+  'use strict';
+
+  const API =
+    'https://compass-api.starsx0601.workers.dev';
+
+  const CATEGORIES = {
+    physical: {
+      name: 'Physical',
+      page: 'physical.html'
+    },
+    mv: {
+      name: 'Music Video',
+      page: 'mv.html'
+    },
+    streaming: {
+      name: 'Streaming',
+      page: 'streaming.html'
+    },
+    download: {
+      name: 'Download',
+      page: 'download.html'
+    },
+    radio: {
+      name: 'Radio',
+      page: 'radio.html'
+    },
+    karaoke: {
+      name: 'Karaoke',
+      page: 'karaoke.html'
+    },
+    other: {
+      name: 'Other',
+      page: 'other.html'
+    }
+  };
+
+  const $ = id => document.getElementById(id);
+
+  function showError(text) {
+    $('articlePanel').hidden = true;
+    $('bottomNav').hidden = true;
+    $('message').textContent = text;
+    $('message').hidden = false;
+  }
+
+  function formatDate(value) {
+    if (!value) return '';
+
+    const date = new Date(value);
+
+    if (!Number.isFinite(date.getTime())) {
+      return '';
+    }
+
+    return date.toLocaleDateString('ja-JP', {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).replaceAll('/', '.');
+  }
+
+  function updatedLabel(article) {
+    if (!article.updated_at || !article.published_at) {
+      return '';
+    }
+
+    const updated = new Date(article.updated_at);
+    const published = new Date(article.published_at);
+
+    if (
+      !Number.isFinite(updated.getTime()) ||
+      !Number.isFinite(published.getTime())
+    ) {
+      return '';
+    }
+
+    if (updated.getTime() - published.getTime() <= 60000) {
+      return '';
+    }
+
+    return formatDate(article.updated_at) + ' 更新';
+  }
+
+  function safeURL(value) {
+    try {
+      const url = new URL(value);
+
+      return (
+        url.protocol === 'https:' ||
+        url.protocol === 'http:'
+      );
+    } catch {
+      return false;
+    }
+  }
+
+  function cleanHTML(html) {
+    const doc = new DOMParser().parseFromString(
+      '<div>' + html + '</div>',
+      'text/html'
+    );
+
+    const root = doc.body.firstElementChild;
+
+    const allowed = new Set([
+      'DIV', 'P', 'BR', 'B', 'STRONG',
+      'I', 'EM', 'U', 'S', 'SPAN', 'FONT',
+      'A', 'UL', 'OL', 'LI', 'BLOCKQUOTE',
+      'H2', 'H3', 'H4', 'IMG', 'VIDEO', 'SOURCE'
+    ]);
+
+    const blocked = new Set([
+      'SCRIPT', 'STYLE', 'IFRAME',
+      'OBJECT', 'EMBED', 'FORM', 'INPUT',
+      'SVG', 'MATH', 'AUDIO', 'META',
+      'LINK', 'TEMPLATE'
+    ]);
+
+    // 親要素から順番に確認する。
+    // 禁止要素は子要素ごと取り除く。
+    function sanitize(parent) {
+      for (const node of Array.from(parent.childNodes)) {
+        if (node.nodeType === Node.COMMENT_NODE) {
+          node.remove();
+          continue;
+        }
+
+        if (node.nodeType !== Node.ELEMENT_NODE) {
+          continue;
+        }
+
+        if (blocked.has(node.tagName)) {
+          node.remove();
+          continue;
+        }
+
+        if (!allowed.has(node.tagName)) {
+          sanitize(node);
+          node.replaceWith(...Array.from(node.childNodes));
+          continue;
+        }
+
+        for (const attribute of Array.from(node.attributes)) {
+          const name = attribute.name.toLowerCase();
+          const value = attribute.value.trim();
+
+          if (
+            name === 'href' &&
+            node.tagName === 'A' &&
+            safeURL(value)
+          ) {
+            continue;
+          }
+
+          if (
+            name === 'src' &&
+            ['IMG', 'VIDEO', 'SOURCE'].includes(node.tagName) &&
+            safeURL(value)
+          ) {
+            continue;
+          }
+
+          if (
+            name === 'alt' &&
+            node.tagName === 'IMG'
+          ) {
+            continue;
+          }
+
+          if (
+            name === 'controls' &&
+            node.tagName === 'VIDEO'
+          ) {
+            continue;
+          }
+
+          if (
+            name === 'preload' &&
+            node.tagName === 'VIDEO' &&
+            ['none', 'metadata', 'auto'].includes(value)
+          ) {
+            continue;
+          }
+
+          if (
+            name === 'playsinline' &&
+            node.tagName === 'VIDEO'
+          ) {
+            continue;
+          }
+
+          if (
+            name === 'type' &&
+            node.tagName === 'SOURCE' &&
+            /^video\/(mp4|webm|quicktime)$/.test(value)
+          ) {
+            continue;
+          }
+
+          if (
+            name === 'size' &&
+            node.tagName === 'FONT' &&
+            /^[1-7]$/.test(value)
+          ) {
+            continue;
+          }
+
+          if (
+            name === 'color' &&
+            node.tagName === 'FONT' &&
+            /^#[0-9a-f]{3,8}$/i.test(value)
+          ) {
+            continue;
+          }
+
+          if (name === 'style') {
+            const parts = value.split(';')
+              .map(part => part.trim())
+              .filter(part =>
+                /^(color|font-size|font-weight|text-align|text-decoration|text-decoration-line|text-decoration-style|text-decoration-color)\s*:/i.test(part) &&
+                !/[()\\]/.test(part)
+              );
+
+            if (parts.length) {
+              node.setAttribute('style', parts.join(';'));
+            } else {
+              node.removeAttribute('style');
+            }
+
+            continue;
+          }
+
+          node.removeAttribute(attribute.name);
+        }
+
+        if (node.tagName === 'A') {
+          node.setAttribute('rel', 'noopener noreferrer');
+          node.setAttribute('target', '_blank');
+        }
+
+        sanitize(node);
+      }
+    }
+
+    sanitize(root);
+
+    return root.innerHTML;
+  }
+
+  function renderArticle(article) {
+    const category = CATEGORIES[article.category] || {
+      name: '記事',
+      page: 'index.html'
+    };
+
+    $('articleCategory').textContent = category.name;
+    $('articleCategory').href = category.page;
+
+    $('topBack').href = category.page;
+    $('topBack').textContent =
+      '← ' + category.name + ' の記事一覧に戻る';
+
+    $('bottomBack').href = category.page;
+    $('bottomBack').textContent =
+      '← ' + category.name + ' に戻る';
+
+    $('articleTitle').textContent =
+      article.title || '無題';
+
+    document.title =
+      (article.title || '記事') + ' | COMPASS';
+
+    const summary = article.summary || '';
+
+    $('articleSummary').textContent = summary;
+    $('articleSummary').hidden = !summary;
+
+    const updated = updatedLabel(article);
+
+    $('updateLabel').textContent = updated;
+    $('updateLabel').hidden = !updated;
+
+    let body = {};
+
+    try {
+      body = JSON.parse(article.body_json || '{}');
+    } catch {
+      body = {};
+    }
+
+    const html =
+      body && typeof body.html === 'string'
+        ? body.html
+        : '';
+
+    $('articleBody').innerHTML = cleanHTML(html);
+
+    $('message').hidden = true;
+    $('articlePanel').hidden = false;
+    $('bottomNav').hidden = false;
+  }
+
+  async function loadArticle() {
+    const params = new URLSearchParams(location.search);
+    const id = params.get('id');
+
+    if (!id) {
+      showError('記事が指定されていません。');
+      return;
+    }
+
+    try {
+      const response = await fetch(
+        API + '/api/public/articles/' +
+        encodeURIComponent(id),
+        { cache: 'no-store' }
+      );
+
+      if (!response.ok) {
+        if (response.status === 404) {
+          throw new Error('記事が見つかりませんでした。');
+        }
+
+        throw new Error(
+          '記事を取得できませんでした。HTTP ' +
+          response.status
+        );
+      }
+
+      const data = await response.json();
+
+      if (!data.article) {
+        throw new Error('記事が見つかりませんでした。');
+      }
+
+      renderArticle(data.article);
+
+    } catch (error) {
+      showError(error.message);
+    }
+  }
+
+  loadArticle();
+})();
+</script>
+
+</body>
+</html>
