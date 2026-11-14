@@ -1,3 +1,4 @@
+
 :root {
   color-scheme: light;
   --navy: #344c68;
@@ -124,16 +125,21 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  min-height: 72px;
+
+  min-height: 60px;
   margin-bottom: 24px;
-  padding: 14px 20px 14px 58px;
+  padding: 9px 20px 9px 58px;
+
   color: var(--ink);
   text-decoration: none;
   background: #fff;
+
   border: 1px solid #d9e0e6;
   border-left: 6px solid #93a2b0;
   border-radius: 11px;
+
   box-shadow: 0 1px 1px #aab5bf0b;
+
   transition:
     background .18s ease,
     border-color .18s ease;
@@ -243,9 +249,9 @@ main {
   }
 
   .article-card {
-    min-height: 70px;
+    min-height: 58px;
     margin-bottom: 24px;
-    padding: 13px 16px 13px 49px;
+    padding: 9px 16px 9px 49px;
   }
 
   .article-card::before {
