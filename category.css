@@ -157,17 +157,27 @@ main {
   outline-offset: 3px;
 }
 
-/* 左側の星 */
+/* 左側の星：③ 二重ライン・アンティークゴールド */
 
 .article-card::before {
-  content: "★";
+  content: "";
   position: absolute;
   left: 19px;
   top: 50%;
   transform: translateY(-50%);
-  color: #93a2b0;
-  font-size: 28px;
-  line-height: 1;
+
+  width: 18px;
+  height: 18px;
+
+  background-color: #c49a42;
+
+  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 3 30 17 45 18.5 33 28 37 43 24 34.5 11 43 15 28 3 18.5 18 17Z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M24 11 28 20.6 38 21.5 30 28 32.5 37 24 31.5 15.5 37 18 28 10 21.5 20 20.6Z' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E");
+  -webkit-mask-size: contain;
+  -webkit-mask-repeat: no-repeat;
+
+  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 3 30 17 45 18.5 33 28 37 43 24 34.5 11 43 15 28 3 18.5 18 17Z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3Cpath d='M24 11 28 20.6 38 21.5 30 28 32.5 37 24 31.5 15.5 37 18 28 10 21.5 20 20.6Z' fill='none' stroke='black' stroke-width='1.5' stroke-linejoin='round'/%3E%3C/svg%3E");
+  mask-size: contain;
+  mask-repeat: no-repeat;
 }
 
 /* タイトル */
@@ -252,7 +262,8 @@ main {
 
   .article-card::before {
     left: 15px;
-    font-size: 25px;
+    width: 17px;
+    height: 17px;
   }
 
   .article-title {
