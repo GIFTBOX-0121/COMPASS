@@ -1,4 +1,3 @@
-
 (() => {
   'use strict';
 
@@ -120,13 +119,6 @@
       heading.textContent = article.title || '無題';
       card.appendChild(heading);
 
-      if (article.summary) {
-        const summary = document.createElement('p');
-        summary.className = 'article-summary';
-        summary.textContent = article.summary;
-        card.appendChild(summary);
-      }
-
       list.appendChild(card);
     }
   }
@@ -164,4 +156,3 @@
 
   load();
 })();
-
