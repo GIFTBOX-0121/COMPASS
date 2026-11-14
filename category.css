@@ -1,18 +1,273 @@
-/* 記事カードの高さをコンパクトに */
-.article-card {
-  min-height: 90px;
-  padding-top: 14px;
-  padding-bottom: 14px;
+
+:root {
+  color-scheme: light;
+  --navy: #344c68;
+  --gold: #c49a42;
+  --ink: #2c353e;
+  --edge: #d9dfe6;
 }
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #fafbfc;
+  color: var(--ink);
+  font-family: Arial, "Helvetica Neue",
+    "Hiragino Kaku Gothic ProN",
+    "Noto Sans JP", sans-serif;
+}
+
+/* ヘッダー */
+
+.site-header {
+  padding: 28px 16px 20px;
+  text-align: center;
+  background: linear-gradient(
+    90deg,
+    #eef2f6 0 10%,
+    #fff 10% 90%,
+    #eef2f6 90%
+  );
+}
+
+.site-logo {
+  color: var(--navy);
+  font-family: "Snell Roundhand",
+    "Apple Chancery", "Brush Script MT",
+    "Segoe Script", cursive;
+  font-size: 42px;
+  font-style: italic;
+  text-decoration: none;
+}
+
+/* ページ */
+
+main {
+  width: min(100% - 32px, 760px);
+  margin: 0 auto;
+  padding: 25px 0 75px;
+}
+
+.back-link {
+  display: inline-block;
+  margin-bottom: 25px;
+  color: var(--navy);
+  font-size: 14px;
+  text-decoration: none;
+}
+
+.category-heading {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.category-heading h1 {
+  margin: 0;
+  color: var(--navy);
+  font-family: Georgia, serif;
+  font-size: clamp(35px, 8vw, 55px);
+  font-weight: 500;
+}
+
+.heading-rule {
+  width: 85px;
+  height: 2px;
+  margin: 17px auto 0;
+  background: var(--gold);
+}
+
+/* 検索 */
+
+.search-box {
+  display: flex;
+  align-items: center;
+  min-height: 56px;
+  padding: 0 18px;
+  background: #fff;
+  border: 1px solid var(--edge);
+  border-radius: 15px;
+  box-shadow: 0 8px 21px #8997a619;
+}
+
+.search-box svg {
+  flex: none;
+  color: #70818e;
+  margin-right: 12px;
+}
+
+.search-box input {
+  width: 100%;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: var(--ink);
+  font: inherit;
+  font-size: 14px;
+}
+
+.search-box:focus-within {
+  outline: 2px solid #9aa8b5;
+  outline-offset: 2px;
+}
+
+/* 記事一覧 */
+
+.article-list {
+  margin-top: 30px;
+}
+
+/* 白いカード・左グレーライン・コンパクト */
+
+.article-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  min-height: 90px;
+  margin-bottom: 24px;
+
+  padding: 14px 20px 14px 70px;
+
+  color: var(--ink);
+  text-decoration: none;
+
+  background: #fff;
+  border: 1px solid #d9e0e6;
+  border-left: 6px solid #93a2b0;
+  border-radius: 11px;
+
+  box-shadow: 0 1px 1px #aab5bf0b;
+
+  transition:
+    background .18s ease,
+    border-color .18s ease;
+}
+
+.article-card:hover {
+  background: #f9fbfd;
+}
+
+.article-card:focus-visible {
+  outline: 3px solid #8b9ba9;
+  outline-offset: 3px;
+}
+
+/* 左側の星 */
+
+.article-card::before {
+  content: "★";
+  position: absolute;
+  left: 19px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #93a2b0;
+  font-size: 28px;
+  line-height: 1;
+}
+
+/* タイトル */
+
+.article-title {
+  margin: 0;
+  color: #303a44;
+  font-size: 18px;
+  line-height: 1.55;
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+/* 説明文 */
 
 .article-summary {
-  margin-top: 5px;
+  margin: 5px 0 0;
+  color: #778694;
+  font-size: 14px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
 }
 
+/* ③ 淡いローズの更新カプセル */
+
+.update-label {
+  position: absolute;
+  top: 0;
+  right: 17px;
+  transform: translateY(-50%);
+  z-index: 1;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 32px;
+  margin: 0;
+  padding: 5px 13px;
+
+  color: #bb3e4c;
+  background: #fff1f2;
+  border: 1px solid #efcdd2;
+  border-radius: 999px;
+
+  font-size: 12px;
+  line-height: 1.35;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* 読み込み・エラー */
+
+.message {
+  padding: 25px 12px;
+  text-align: center;
+  color: #69798c;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* スマートフォン */
+
 @media (max-width: 480px) {
+  .site-header {
+    padding-top: 22px;
+  }
+
+  .site-logo {
+    font-size: 36px;
+  }
+
+  .article-list {
+    margin-top: 30px;
+  }
+
   .article-card {
     min-height: 88px;
-    padding-top: 13px;
-    padding-bottom: 13px;
+    margin-bottom: 24px;
+    padding: 13px 16px 13px 58px;
+  }
+
+  .article-card::before {
+    left: 15px;
+    font-size: 25px;
+  }
+
+  .article-title {
+    font-size: 16px;
+  }
+
+  .article-summary {
+    font-size: 13px;
+    margin-top: 5px;
+  }
+
+  .update-label {
+    right: 12px;
+    min-height: 29px;
+    padding: 5px 11px;
+    font-size: 11px;
   }
 }
