@@ -31,13 +31,86 @@ button:disabled{opacity:.5}
 .remember input{width:20px;height:20px;accent-color:var(--gold)}
 .mode{padding:12px;border-radius:9px;background:#edf1f6;color:var(--navy);font-weight:bold}
 .mode.edit{background:#fff3d9;color:#755512}
-.toolbar{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
+
+/* 本文エディター */
+.toolbar{
+ display:flex;
+ flex-wrap:wrap;
+ gap:6px;
+ margin:10px 0;
+}
 .toolbar button{background:#edf1f6}
 .toolbar select{width:auto;max-width:180px}
-.toolbar input[type=color]{width:45px;padding:2px;height:40px}
-#editor{border:1px solid #cbd5e1;border-radius:10px;padding:14px;min-height:220px;line-height:1.8;overflow-wrap:anywhere;outline:none}
+.toolbar input[type=color]{
+ width:45px;
+ padding:2px;
+ height:40px;
+}
+#editor{
+ border:1px solid #cbd5e1;
+ border-radius:10px;
+ padding:14px;
+ height:min(85vw,390px);
+ min-height:270px;
+ max-height:390px;
+ overflow-y:auto;
+ overscroll-behavior:contain;
+ -webkit-overflow-scrolling:touch;
+ line-height:1.8;
+ overflow-wrap:anywhere;
+ outline:none;
+ background:white;
+}
+#editor:focus{border-color:#93a2b0}
 #editor img,#editor video{max-width:100%;height:auto}
 #editor video{display:block;margin:10px 0}
+.editor-help{
+ margin:7px 0 10px;
+ font-size:12px;
+ color:#69798c;
+}
+.marker-tools{
+ display:flex;
+ align-items:center;
+ flex-wrap:wrap;
+ gap:6px;
+ padding:8px;
+ border:1px solid #dce3ec;
+ border-radius:10px;
+ background:#f8fafc;
+}
+.marker-tools span{
+ font-size:12px;
+ font-weight:700;
+ margin-right:4px;
+}
+.marker-btn{
+ width:35px;
+ height:35px;
+ padding:0;
+ border:1px solid #cbd5e1;
+ border-radius:8px;
+ position:relative;
+}
+.marker-btn.active{
+ outline:2px solid var(--navy);
+ outline-offset:2px;
+}
+.marker-btn[data-color="#fff1a8"]{background:#fff1a8}
+.marker-btn[data-color="#ffd5df"]{background:#ffd5df}
+.marker-btn[data-color="#cdebff"]{background:#cdebff}
+.marker-btn[data-color="#ddf2c9"]{background:#ddf2c9}
+.marker-btn[data-color="remove"]{background:white}
+.marker-btn[data-color="remove"]::after{
+ content:"×";
+ font-size:23px;
+ color:#64748b;
+}
+.color-apply{
+ background:#edf1f6;
+ font-size:12px;
+ padding:9px 11px;
+}
 .item{border-top:1px solid #dce3ec;padding:13px 0}
 .item small{display:block;color:#728096;margin:5px 0}
 #message,#uploadStatus{font-size:13px;color:#344c68;white-space:pre-wrap}
@@ -52,6 +125,7 @@ button:disabled{opacity:.5}
 <body>
 <header><h1>COMPASS</h1></header>
 <main>
+
 <section class="panel" id="loginPanel">
 <h2>◆ 管理者認証</h2>
 <label>Worker URL</label>
@@ -109,6 +183,7 @@ button:disabled{opacity:.5}
 </select>
 
 <select id="fontSize">
+<option value="">文字サイズ</option>
 <option value="3">標準</option>
 <option value="2">小</option>
 <option value="4">大</option>
@@ -116,12 +191,25 @@ button:disabled{opacity:.5}
 </select>
 
 <input id="fontColor" type="color" value="#344c68" aria-label="文字色">
+<button type="button" id="applyColorBtn" class="color-apply">文字色を適用</button>
+
 <button type="button" id="linkBtn">リンク</button>
 <button type="button" id="imageUrlBtn">画像URL</button>
 <button type="button" id="imageFileBtn">写真を選ぶ</button>
 <button type="button" id="videoUrlBtn">動画URL</button>
 <button type="button" id="videoFileBtn">動画を選ぶ</button>
 </div>
+
+<div class="marker-tools" role="group" aria-label="文字のマーカー">
+<span>マーカー</span>
+<button type="button" class="marker-btn" data-color="#fff1a8" aria-label="黄色マーカー"></button>
+<button type="button" class="marker-btn" data-color="#ffd5df" aria-label="ピンクマーカー"></button>
+<button type="button" class="marker-btn" data-color="#cdebff" aria-label="水色マーカー"></button>
+<button type="button" class="marker-btn" data-color="#ddf2c9" aria-label="緑マーカー"></button>
+<button type="button" class="marker-btn" data-color="remove" aria-label="マーカーを消す"></button>
+</div>
+
+<p class="editor-help">文字を選択してから書式を設定してください。本文は枠内をスクロールできます。</p>
 
 <input id="imageInput" class="hidden" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
 <input id="videoInput" class="hidden" type="file" accept="video/mp4,video/webm,video/quicktime,video/*">
@@ -239,9 +327,13 @@ function reset(){
  editingId=null;
  editingTitle='';
  editingSummary='';
+ selection=null;
  $('title').value='';
  $('category').value='physical';
  $('editor').innerHTML='';
+ $('editor').scrollTop=0;
+ $('fontSize').value='';
+ $('fontColor').value='#344c68';
  $('mode').className='mode';
  $('mode').textContent='✦ 新規記事を作成中';
  $('formHeading').textContent='新しい記事';
@@ -422,7 +514,7 @@ function clean(html){
     const parts=v.split(';')
      .map(x=>x.trim())
      .filter(x=>
-      /^(color|font-size|font-weight|text-align|text-decoration|text-decoration-line|text-decoration-style|text-decoration-color)\s*:/i.test(x)
+      /^(color|background-color|font-size|font-weight|text-align|text-decoration|text-decoration-line|text-decoration-style|text-decoration-color)\s*:/i.test(x)
       && !/[()\\]/.test(x)
      );
     if(parts.length){
@@ -457,6 +549,7 @@ async function editArticle(id){
   editingId=a.id;
   editingTitle=a.title;
   editingSummary=a.summary||'';
+  selection=null;
   $('category').value=a.category;
   $('title').value=a.title;
 
@@ -466,6 +559,8 @@ async function editArticle(id){
   }catch(e){}
 
   $('editor').innerHTML=clean(body.html||'');
+  $('editor').scrollTop=0;
+  $('fontSize').value='';
   $('mode').className='mode edit';
   $('mode').textContent='⚠ 既存記事を編集中：'+a.title;
   $('formHeading').textContent='記事を編集';
@@ -542,6 +637,8 @@ async function deleteArticle(id,title){
  }
 }
 
+/* 選択範囲を保持 */
+
 function rememberSelection(){
  const s=window.getSelection();
  if(s&&s.rangeCount&&$('editor').contains(s.anchorNode)){
@@ -553,9 +650,30 @@ function restoreSelection(){
  if(selection){
   const s=window.getSelection();
   s.removeAllRanges();
-  s.addRange(selection);
+  s.addRange(selection.cloneRange());
  }
- $('editor').focus();
+ $('editor').focus({preventScroll:true});
+}
+
+function selectedRange(){
+ restoreSelection();
+ const s=window.getSelection();
+ if(!s||!s.rangeCount)return null;
+ const range=s.getRangeAt(0);
+ if(!$('editor').contains(range.commonAncestorContainer)){
+  return null;
+ }
+ return range;
+}
+
+function applyCommand(command,value){
+ const range=selectedRange();
+ if(!range||range.collapsed){
+  alert('書式を変えたい文字を選択してください');
+  return;
+ }
+ document.execCommand(command,false,value);
+ rememberSelection();
 }
 
 function insertNode(node){
@@ -578,16 +696,12 @@ function insertNode(node){
 }
 
 function applyUnderline(style){
- restoreSelection();
- const s=window.getSelection();
+ const range=selectedRange();
 
- if(!s||!s.rangeCount||s.isCollapsed){
+ if(!range||range.collapsed){
   alert('下線を付けたい文字を選択してください');
   return;
  }
-
- const range=s.getRangeAt(0);
- if(!$('editor').contains(range.commonAncestorContainer))return;
 
  const span=document.createElement('span');
 
@@ -601,6 +715,7 @@ function applyUnderline(style){
  try{
   span.append(range.extractContents());
   range.insertNode(span);
+  const s=window.getSelection();
   s.removeAllRanges();
   const r=document.createRange();
   r.selectNodeContents(span);
@@ -610,6 +725,28 @@ function applyUnderline(style){
   alert('文字の選択範囲を少し短くして試してください');
  }
 }
+
+/* マーカー */
+
+function applyMarker(color){
+ const range=selectedRange();
+
+ if(!range||range.collapsed){
+  alert('マーカーを付けたい文字を選択してください');
+  return;
+ }
+
+ if(color==='remove'){
+  document.execCommand('hiliteColor',false,'transparent');
+ }else{
+  document.execCommand('styleWithCSS',false,true);
+  document.execCommand('hiliteColor',false,color);
+ }
+
+ rememberSelection();
+}
+
+/* アップロード */
 
 async function upload(file,kind){
  if(!file)return;
@@ -670,6 +807,8 @@ async function upload(file,kind){
  }
 }
 
+/* 操作イベント */
+
 $('loginBtn').onclick=()=>login(false);
 $('logoutBtn').onclick=logout;
 $('forgetBtn').onclick=forgetToken;
@@ -695,10 +834,17 @@ $('editor').addEventListener('touchend',()=>{
  setTimeout(rememberSelection,100);
 });
 
+/* iPhoneでツールバーを触っても選択範囲を保持 */
+document.querySelectorAll('.toolbar button,.marker-btn')
+ .forEach(button=>{
+  button.addEventListener('pointerdown',rememberSelection);
+ });
+
 document.querySelectorAll('[data-cmd]').forEach(b=>{
  b.onclick=()=>{
   restoreSelection();
   document.execCommand(b.dataset.cmd,false,null);
+  rememberSelection();
  };
 });
 
@@ -707,21 +853,37 @@ $('underlineStyle').onchange=e=>{
  e.target.value='';
 };
 
+/* 毎回選び直せる文字サイズ */
 $('fontSize').onchange=e=>{
- restoreSelection();
- document.execCommand('fontSize',false,e.target.value);
+ const value=e.target.value;
+ if(value){
+  applyCommand('fontSize',value);
+ }
+ e.target.value='';
 };
 
-$('fontColor').oninput=e=>{
- restoreSelection();
- document.execCommand('foreColor',false,e.target.value);
+/* 同じ色を何度でも適用 */
+$('fontColor').oninput=()=>{
+ applyCommand('foreColor',$('fontColor').value);
 };
+
+$('applyColorBtn').onclick=()=>{
+ applyCommand('foreColor',$('fontColor').value);
+};
+
+/* マーカー */
+document.querySelectorAll('.marker-btn').forEach(b=>{
+ b.onclick=()=>{
+  applyMarker(b.dataset.color);
+ };
+});
 
 $('linkBtn').onclick=()=>{
  const url=prompt('リンク先URL（https://）');
  if(url&&safeUrl(url)){
   restoreSelection();
   document.execCommand('createLink',false,url);
+  rememberSelection();
  }
 };
 
