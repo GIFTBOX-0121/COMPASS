@@ -94,9 +94,6 @@ button:disabled{opacity:.5}
 <label>記事タイトル</label>
 <input id="title" maxlength="180" placeholder="記事のタイトル">
 
-<label>一覧に表示する説明文</label>
-<textarea id="summary" maxlength="1000" placeholder="記事の概要"></textarea>
-
 <label>本文</label>
 <div class="toolbar">
 <button type="button" data-cmd="bold"><b>B</b></button>
@@ -170,6 +167,7 @@ const names={
 let auth='';
 let editingId=null;
 let editingTitle='';
+let editingSummary='';
 let articles=[];
 let busy=false;
 let filter='all';
@@ -240,8 +238,8 @@ async function login(auto=false){
 function reset(){
  editingId=null;
  editingTitle='';
+ editingSummary='';
  $('title').value='';
- $('summary').value='';
  $('category').value='physical';
  $('editor').innerHTML='';
  $('mode').className='mode';
@@ -458,9 +456,9 @@ async function editArticle(id){
   const a=(await req('/api/articles/'+encodeURIComponent(id))).article;
   editingId=a.id;
   editingTitle=a.title;
+  editingSummary=a.summary||'';
   $('category').value=a.category;
   $('title').value=a.title;
-  $('summary').value=a.summary||'';
 
   let body={};
   try{
@@ -497,7 +495,7 @@ async function save(status){
  const data={
   category:$('category').value,
   title,
-  summary:$('summary').value,
+  summary:editingSummary,
   body_json:JSON.stringify({html:clean($('editor').innerHTML)}),
   status
  };
