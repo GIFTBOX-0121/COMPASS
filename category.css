@@ -20,6 +20,8 @@ body {
     "Noto Sans JP", sans-serif;
 }
 
+/* ヘッダー */
+
 .site-header {
   padding: 28px 16px 20px;
   text-align: center;
@@ -40,6 +42,8 @@ body {
   font-style: italic;
   text-decoration: none;
 }
+
+/* ページ全体 */
 
 main {
   width: min(100% - 32px, 760px);
@@ -75,6 +79,8 @@ main {
   background: var(--gold);
 }
 
+/* カテゴリー内検索 */
+
 .search-box {
   display: flex;
   align-items: center;
@@ -108,30 +114,48 @@ main {
   outline-offset: 2px;
 }
 
+/* 記事一覧 */
+
 .article-list {
-  margin-top: 25px;
+  margin-top: 30px;
 }
 
+/*
+  記事カード
+
+  ・白背景
+  ・薄いグレーの外枠
+  ・左側に太いグレーライン
+  ・更新の有無にかかわらず同じ最小高さ
+*/
+
 .article-card {
-  display: block;
-  padding: 20px;
-  margin-bottom: 12px;
-  color: inherit;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  min-height: 116px;
+  margin-bottom: 24px;
+  padding: 22px 22px 22px 27px;
+
+  color: var(--ink);
   text-decoration: none;
-  background: linear-gradient(
-    115deg,
-    #fdfefe,
-    #eff3f6 66%,
-    #fff
-  );
-  border: 2px solid #d0d9e1;
-  border-radius: 15px;
-  box-shadow: inset 0 0 0 5px #ffffffb5;
-  transition: transform .18s ease;
+
+  background: #fff;
+  border: 1px solid #d9e0e6;
+  border-left: 6px solid #93a2b0;
+  border-radius: 11px;
+
+  box-shadow: 0 1px 1px #aab5bf0b;
+
+  transition:
+    background .18s ease,
+    border-color .18s ease;
 }
 
 .article-card:hover {
-  transform: translateY(-2px);
+  background: #f9fbfd;
 }
 
 .article-card:focus-visible {
@@ -139,27 +163,61 @@ main {
   outline-offset: 3px;
 }
 
+/* 記事タイトル */
+
 .article-title {
   margin: 0;
+  color: #303a44;
   font-size: 18px;
-  line-height: 1.5;
-  font-weight: 700;
+  line-height: 1.55;
+  font-weight: 600;
+  overflow-wrap: anywhere;
 }
+
+/* 記事の説明文 */
 
 .article-summary {
-  margin: 9px 0 0;
-  color: #647589;
+  margin: 10px 0 0;
+  color: #778694;
   font-size: 14px;
-  line-height: 1.7;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
 }
 
+/*
+  ③ 淡いローズのカプセル
+
+  カードの右上の枠に重ねる。
+  更新のない記事には表示しない。
+*/
+
 .update-label {
-  display: inline-block;
-  margin-bottom: 9px;
-  color: #c02e42;
+  position: absolute;
+  top: 0;
+  right: 17px;
+  transform: translateY(-50%);
+  z-index: 1;
+
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 32px;
+  margin: 0;
+  padding: 5px 13px;
+
+  color: #bb3e4c;
+  background: #fff1f2;
+  border: 1px solid #efcdd2;
+  border-radius: 999px;
+
   font-size: 12px;
+  line-height: 1.35;
   font-weight: 700;
+  white-space: nowrap;
 }
+
+/* 読み込み・エラーメッセージ */
 
 .message {
   padding: 25px 12px;
@@ -169,7 +227,10 @@ main {
   line-height: 1.8;
 }
 
+/* スマートフォン */
+
 @media (max-width: 480px) {
+
   .site-header {
     padding-top: 22px;
   }
@@ -178,12 +239,30 @@ main {
     font-size: 36px;
   }
 
+  .article-list {
+    margin-top: 30px;
+  }
+
   .article-card {
-    padding: 17px;
+    min-height: 112px;
+    margin-bottom: 24px;
+    padding: 20px 17px 20px 21px;
   }
 
   .article-title {
     font-size: 16px;
+    line-height: 1.55;
+  }
+
+  .article-summary {
+    font-size: 13px;
+    margin-top: 8px;
+  }
+
+  .update-label {
+    right: 12px;
+    min-height: 29px;
+    padding: 5px 11px;
+    font-size: 11px;
   }
 }
-
