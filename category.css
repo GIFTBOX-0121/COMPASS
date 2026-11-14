@@ -148,7 +148,7 @@ main {
   outline-offset: 3px;
 }
 
-/* ③ ダブルアウトラインの星・ゴールド */
+/* 03 少し丸い五芒星・アンティークゴールド */
 
 .article-card::before {
   content: "";
@@ -156,19 +156,26 @@ main {
   left: 19px;
   top: 50%;
   transform: translateY(-50%);
+
   width: 18px;
   height: 18px;
   background-color: #c49a42;
 
-  -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 3 30 17 45 18.5 33 28 37 43 24 34.5 11 43 15 28 3 18.5 18 17Z' fill='none' stroke='black' stroke-width='2.5' stroke-linejoin='round'/%3E%3Cpath d='M24 11 28 20.6 38 21.5 30 28 32.5 37 24 31.5 15.5 37 18 28 10 21.5 20 20.6Z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E");
-  -webkit-mask-size: contain;
-  -webkit-mask-repeat: no-repeat;
-  -webkit-mask-position: center;
+  -webkit-mask-image: none;
+  mask-image: none;
 
-  mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Cpath d='M24 3 30 17 45 18.5 33 28 37 43 24 34.5 11 43 15 28 3 18.5 18 17Z' fill='none' stroke='black' stroke-width='2.5' stroke-linejoin='round'/%3E%3Cpath d='M24 11 28 20.6 38 21.5 30 28 32.5 37 24 31.5 15.5 37 18 28 10 21.5 20 20.6Z' fill='none' stroke='black' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E");
-  mask-size: contain;
-  mask-repeat: no-repeat;
-  mask-position: center;
+  clip-path: polygon(
+    50% 3%,
+    62% 35%,
+    97% 37%,
+    70% 59%,
+    79% 94%,
+    50% 75%,
+    21% 94%,
+    30% 59%,
+    3% 37%,
+    38% 35%
+  );
 }
 
 /* タイトル */
@@ -190,16 +197,20 @@ main {
   right: 17px;
   transform: translateY(-50%);
   z-index: 1;
+
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   min-height: 32px;
   margin: 0;
   padding: 5px 13px;
+
   color: #bb3e4c;
   background: #fff1f2;
   border: 1px solid #efcdd2;
   border-radius: 999px;
+
   font-size: 12px;
   line-height: 1.35;
   font-weight: 700;
