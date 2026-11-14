@@ -33,6 +33,7 @@ button:disabled{opacity:.5}
 .mode.edit{background:#fff3d9;color:#755512}
 
 /* 本文エディター */
+
 .toolbar{
  display:flex;
  flex-wrap:wrap;
@@ -120,6 +121,63 @@ button:disabled{opacity:.5}
 .status-tabs{border-bottom:1px solid #dce3ec;padding-bottom:9px;margin-top:3px}
 .status-tabs button{flex:1;font-weight:700}
 .status-tabs button.active{background:var(--gold);color:white}
+
+/* スマホ用・キーボード上のツールバー */
+
+@media(max-width:767px){
+ body.editor-active{
+  padding-bottom:110px;
+ }
+ body.editor-active .toolbar,
+ body.editor-active .marker-tools{
+  position:fixed;
+  left:8px;
+  right:8px;
+  z-index:9999;
+  margin:0;
+  background:rgba(255,255,255,.97);
+  border:1px solid #dce3ec;
+  box-shadow:0 -3px 18px #344c6820;
+ }
+ body.editor-active .toolbar{
+  bottom:calc(var(--keyboard-offset,0px) + 49px);
+  display:flex;
+  flex-wrap:nowrap;
+  overflow-x:auto;
+  overflow-y:hidden;
+  gap:6px;
+  padding:7px 9px;
+  border-radius:12px 12px 0 0;
+  scrollbar-width:none;
+  -webkit-overflow-scrolling:touch;
+ }
+ body.editor-active .toolbar::-webkit-scrollbar{
+  display:none;
+ }
+ body.editor-active .toolbar>*{
+  flex:0 0 auto;
+ }
+ body.editor-active .toolbar button{
+  white-space:nowrap;
+  min-height:36px;
+ }
+ body.editor-active .toolbar select{
+  max-width:125px;
+  min-height:36px;
+  padding:6px;
+ }
+ body.editor-active .marker-tools{
+  bottom:var(--keyboard-offset,0px);
+  height:49px;
+  flex-wrap:nowrap;
+  overflow-x:auto;
+  padding:6px 10px;
+  border-radius:0 0 12px 12px;
+ }
+ body.editor-active .marker-btn{
+  flex:0 0 35px;
+ }
+}
 </style>
 </head>
 <body>
@@ -169,6 +227,7 @@ button:disabled{opacity:.5}
 <input id="title" maxlength="180" placeholder="記事のタイトル">
 
 <label>本文</label>
+
 <div class="toolbar">
 <button type="button" data-cmd="bold"><b>B</b></button>
 <button type="button" data-cmd="italic"><i>I</i></button>
@@ -209,7 +268,9 @@ button:disabled{opacity:.5}
 <button type="button" class="marker-btn" data-color="remove" aria-label="マーカーを消す"></button>
 </div>
 
-<p class="editor-help">文字を選択してから書式を設定してください。本文は枠内をスクロールできます。</p>
+<p class="editor-help">
+文字を選択してから書式を設定してください。本文は枠内をスクロールできます。
+</p>
 
 <input id="imageInput" class="hidden" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
 <input id="videoInput" class="hidden" type="file" accept="video/mp4,video/webm,video/quicktime,video/*">
@@ -221,7 +282,10 @@ button:disabled{opacity:.5}
 <button id="draftBtn" class="light">下書き保存</button>
 <button id="publishBtn" class="gold">公開する</button>
 </div>
-<button id="resetBtn" class="light" style="width:100%;margin-top:10px">新しい記事を書く</button>
+
+<button id="resetBtn" class="light" style="width:100%;margin-top:10px">
+新しい記事を書く
+</button>
 </section>
 
 <section class="panel">
@@ -241,6 +305,7 @@ button:disabled{opacity:.5}
 const $=id=>document.getElementById(id);
 const API_KEY='compass_api_url';
 const TOKEN_KEY='compass_admin_token';
+
 const names={
  all:'ALL',
  physical:'Physical',
@@ -302,6 +367,7 @@ async function login(auto=false){
   if(!result.ok)throw Error('認証できませんでした');
 
   localStorage.setItem(API_KEY,base());
+
   if($('remember').checked){
    localStorage.setItem(TOKEN_KEY,auth);
   }else{
@@ -473,11 +539,13 @@ function safeUrl(s){
 function clean(html){
  const doc=new DOMParser().parseFromString('<div>'+html+'</div>','text/html');
  const root=doc.body.firstElementChild;
+
  const allowed=new Set([
   'DIV','P','BR','B','STRONG','I','EM','U','S',
   'SPAN','FONT','A','UL','OL','LI','BLOCKQUOTE',
   'H2','H3','H4','IMG','VIDEO','SOURCE'
  ]);
+
  const blocked=new Set([
   'SCRIPT','STYLE','IFRAME','OBJECT','EMBED',
   'FORM','INPUT','SVG','MATH','AUDIO','META','LINK'
@@ -517,6 +585,7 @@ function clean(html){
       /^(color|background-color|font-size|font-weight|text-align|text-decoration|text-decoration-line|text-decoration-style|text-decoration-color)\s*:/i.test(x)
       && !/[()\\]/.test(x)
      );
+
     if(parts.length){
      el.setAttribute('style',parts.join(';'));
     }else{
@@ -546,10 +615,12 @@ async function editArticle(id){
 
  try{
   const a=(await req('/api/articles/'+encodeURIComponent(id))).article;
+
   editingId=a.id;
   editingTitle=a.title;
   editingSummary=a.summary||'';
   selection=null;
+
   $('category').value=a.category;
   $('title').value=a.title;
 
@@ -561,9 +632,11 @@ async function editArticle(id){
   $('editor').innerHTML=clean(body.html||'');
   $('editor').scrollTop=0;
   $('fontSize').value='';
+
   $('mode').className='mode edit';
   $('mode').textContent='⚠ 既存記事を編集中：'+a.title;
   $('formHeading').textContent='記事を編集';
+
   $('formPanel').scrollIntoView({
    behavior:'smooth',
    block:'start'
@@ -577,12 +650,14 @@ async function save(status){
  if(busy)return;
 
  const title=$('title').value.trim();
+
  if(!title){
   alert('記事タイトルを入力してください');
   return;
  }
 
  const id=editingId;
+
  if(id&&!confirm('既存の記事「'+editingTitle+'」を上書き保存します。よろしいですか？')){
   return;
  }
@@ -657,21 +732,27 @@ function restoreSelection(){
 
 function selectedRange(){
  restoreSelection();
+
  const s=window.getSelection();
  if(!s||!s.rangeCount)return null;
+
  const range=s.getRangeAt(0);
+
  if(!$('editor').contains(range.commonAncestorContainer)){
   return null;
  }
+
  return range;
 }
 
 function applyCommand(command,value){
  const range=selectedRange();
+
  if(!range||range.collapsed){
   alert('書式を変えたい文字を選択してください');
   return;
  }
+
  document.execCommand(command,false,value);
  rememberSelection();
 }
@@ -715,11 +796,14 @@ function applyUnderline(style){
  try{
   span.append(range.extractContents());
   range.insertNode(span);
+
   const s=window.getSelection();
   s.removeAllRanges();
+
   const r=document.createRange();
   r.selectNodeContents(span);
   s.addRange(r);
+
   rememberSelection();
  }catch(e){
   alert('文字の選択範囲を少し短くして試してください');
@@ -767,7 +851,9 @@ async function upload(file,kind){
 
  const b=kind==='image'?$('imageFileBtn'):$('videoFileBtn');
  b.disabled=true;
- $('uploadStatus').textContent='アップロード中：'+file.name+'（完了まで保存しないでください）';
+
+ $('uploadStatus').textContent=
+  'アップロード中：'+file.name+'（完了まで保存しないでください）';
 
  try{
   const form=new FormData();
@@ -780,6 +866,7 @@ async function upload(file,kind){
   });
 
   const obj=await res.json().catch(()=>({}));
+
   if(!res.ok){
    throw Error(obj.error||'HTTP '+res.status);
   }
@@ -825,16 +912,17 @@ $('resetBtn').onclick=()=>{
   )
   &&!confirm('入力中の内容を破棄して新しい記事を書きますか？')
  )return;
+
  reset();
 };
 
 $('editor').addEventListener('mouseup',rememberSelection);
 $('editor').addEventListener('keyup',rememberSelection);
+
 $('editor').addEventListener('touchend',()=>{
  setTimeout(rememberSelection,100);
 });
 
-/* iPhoneでツールバーを触っても選択範囲を保持 */
 document.querySelectorAll('.toolbar button,.marker-btn')
  .forEach(button=>{
   button.addEventListener('pointerdown',rememberSelection);
@@ -853,16 +941,16 @@ $('underlineStyle').onchange=e=>{
  e.target.value='';
 };
 
-/* 毎回選び直せる文字サイズ */
 $('fontSize').onchange=e=>{
  const value=e.target.value;
+
  if(value){
   applyCommand('fontSize',value);
  }
+
  e.target.value='';
 };
 
-/* 同じ色を何度でも適用 */
 $('fontColor').oninput=()=>{
  applyCommand('foreColor',$('fontColor').value);
 };
@@ -871,7 +959,6 @@ $('applyColorBtn').onclick=()=>{
  applyCommand('foreColor',$('fontColor').value);
 };
 
-/* マーカー */
 document.querySelectorAll('.marker-btn').forEach(b=>{
  b.onclick=()=>{
   applyMarker(b.dataset.color);
@@ -880,6 +967,7 @@ document.querySelectorAll('.marker-btn').forEach(b=>{
 
 $('linkBtn').onclick=()=>{
  const url=prompt('リンク先URL（https://）');
+
  if(url&&safeUrl(url)){
   restoreSelection();
   document.execCommand('createLink',false,url);
@@ -889,6 +977,7 @@ $('linkBtn').onclick=()=>{
 
 $('imageUrlBtn').onclick=()=>{
  const url=prompt('画像URL（https://）');
+
  if(url&&safeUrl(url)){
   const img=document.createElement('img');
   img.src=url;
@@ -902,8 +991,10 @@ $('videoUrlBtn').onclick=()=>{
  if(!url)return;
 
  let id='';
+
  try{
   const u=new URL(url);
+
   if(u.hostname==='youtu.be'){
    id=u.pathname.slice(1);
   }else if([
@@ -920,10 +1011,12 @@ $('videoUrlBtn').onclick=()=>{
  if(/^[A-Za-z0-9_-]{11}$/.test(id)){
   const p=document.createElement('p');
   const a=document.createElement('a');
+
   a.href='https://www.youtube.com/watch?v='+id;
   a.textContent='▶ YouTube動画を見る';
   a.target='_blank';
   a.rel='noopener noreferrer';
+
   p.append(a);
   insertNode(p);
  }else if(safeUrl(url)&&/\.(mp4|webm|mov)(\?.*)?$/i.test(url)){
@@ -957,6 +1050,7 @@ $('videoInput').onchange=e=>{
 
 $('editor').addEventListener('paste',e=>{
  e.preventDefault();
+
  document.execCommand(
   'insertText',
   false,
@@ -964,11 +1058,86 @@ $('editor').addEventListener('paste',e=>{
  );
 });
 
+/* iPhoneキーボード上の書式ツールバー */
+
+(function setupFloatingToolbar(){
+ const editor=$('editor');
+ const viewport=window.visualViewport;
+ let hideTimer=null;
+
+ function updatePosition(){
+  if(!document.body.classList.contains('editor-active')){
+   return;
+  }
+
+  let offset=0;
+
+  if(viewport){
+   offset=Math.max(
+    0,
+    window.innerHeight-
+    viewport.height-
+    viewport.offsetTop
+   );
+  }
+
+  document.documentElement.style.setProperty(
+   '--keyboard-offset',
+   offset+'px'
+  );
+ }
+
+ function showToolbar(){
+  clearTimeout(hideTimer);
+  document.body.classList.add('editor-active');
+  updatePosition();
+ }
+
+ function hideToolbar(){
+  hideTimer=setTimeout(()=>{
+   if(
+    document.activeElement!==editor &&
+    !document.querySelector('.toolbar:focus-within') &&
+    !document.querySelector('.marker-tools:focus-within')
+   ){
+    document.body.classList.remove('editor-active');
+    document.documentElement.style.removeProperty(
+     '--keyboard-offset'
+    );
+   }
+  },350);
+ }
+
+ editor.addEventListener('focus',showToolbar);
+ editor.addEventListener('blur',hideToolbar);
+
+ document.querySelectorAll(
+  '.toolbar,.marker-tools'
+ ).forEach(element=>{
+  element.addEventListener('pointerdown',()=>{
+   clearTimeout(hideTimer);
+  });
+ });
+
+ if(viewport){
+  viewport.addEventListener('resize',updatePosition);
+  viewport.addEventListener('scroll',updatePosition);
+ }
+
+ window.addEventListener('resize',updatePosition);
+})();
+
+/* 保存済みの認証キー */
+
 const saved=localStorage.getItem(TOKEN_KEY);
+
 if(saved){
  $('token').value=saved;
  $('remember').checked=true;
- if($('api').value.trim())login(true);
+
+ if($('api').value.trim()){
+  login(true);
+ }
 }
 
 })();
