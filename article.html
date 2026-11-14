@@ -505,7 +505,7 @@ main {
             const parts = value.split(';')
               .map(part => part.trim())
               .filter(part =>
-                /^(color|font-size|font-weight|text-align|text-decoration|text-decoration-line|text-decoration-style|text-decoration-color)\s*:/i.test(part) &&
+                /^(color|background-color|font-size|font-weight|text-align|text-decoration|text-decoration-line|text-decoration-style|text-decoration-color)\s*:/i.test(part) &&
                 !/[()\\]/.test(part)
               );
 
