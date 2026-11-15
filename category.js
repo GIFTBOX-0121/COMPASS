@@ -1,3 +1,4 @@
+
 (() => {
   'use strict';
 
@@ -33,7 +34,10 @@
     if (!value) return '';
 
     const date = new Date(value);
-    if (Number.isNaN(date.getTime())) return '';
+
+    if (Number.isNaN(date.getTime())) {
+      return '';
+    }
 
     return date.toLocaleDateString('ja-JP', {
       year: 'numeric',
@@ -72,6 +76,7 @@
   }
 
   function render() {
+    // 空白で区切った複数ワードをAND検索
     const words = search.value
       .trim()
       .toLocaleLowerCase()
@@ -79,9 +84,14 @@
       .filter(Boolean);
 
     const filtered = articles.filter(article => {
+      // タイトル・概要・検索キーワード・本文を検索対象にする
       const text = [
         article.title || '',
-        article.summary || ''
+        article.summary || '',
+        article.search_keywords || '',
+        article.search_text || '',
+        NAMES[article.category] || '',
+        article.category || ''
       ].join(' ').toLocaleLowerCase();
 
       return words.every(word => text.includes(word));
