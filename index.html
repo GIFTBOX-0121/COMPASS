@@ -356,6 +356,53 @@ body {
   line-height: 1.8;
   color: #68788a;
 }
+
+/* Support垢・再生リスト：追加部分 */
+.quick-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 11px;
+  width: 100%;
+  margin: 0;
+}
+.v06 .quick-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  min-height: 51px;
+  padding: 10px 8px;
+  border: 2px solid #d8a7ae;
+  border-radius: 100px;
+  background: linear-gradient(
+    115deg,
+    #fffafa,
+    #f8e7e9 66%,
+    #fffafa
+  );
+  box-shadow: inset 0 0 0 5px #ffffffb5;
+  color: #a04d5a;
+  font-size: 19px;
+  font-weight: 600;
+  text-align: center;
+  text-decoration: none;
+  transition: transform .18s ease, box-shadow .18s ease;
+}
+.quick-link:hover {
+  transform: translateY(-1px);
+}
+.quick-link:focus-visible {
+  outline: 3px solid #bd808a;
+  outline-offset: 3px;
+}
+@media (max-width:700px) {
+  .quick-links { gap: 9px; }
+  .v06 .quick-link {
+    min-height: 44px;
+    padding: 8px 5px;
+    font-size: 15px;
+  }
+}
 </style>
 </head>
 
@@ -404,6 +451,16 @@ body {
      hidden></div>
 
 <div class="cats" id="categories">
+
+  <!-- 追加：Physicalの上に2つ横並び -->
+  <div class="quick-links">
+    <a class="quick-link" href="support.html">
+      Support垢
+    </a>
+    <a class="quick-link" href="list.html">
+      再生リスト
+    </a>
+  </div>
 
   <a aria-label="Physical (CD)"
      class="cat" href="physical.html">
