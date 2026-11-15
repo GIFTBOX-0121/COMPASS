@@ -1,4 +1,3 @@
-
 (() => {
   'use strict';
 
@@ -96,6 +95,12 @@
 
       return words.every(word => text.includes(word));
     });
+
+    // このカテゴリー内だけ固定記事を先頭へ。固定同士は更新日時順。
+    filtered.sort((a,b) =>
+      (Number(Boolean(b.pinned)) - Number(Boolean(a.pinned))) ||
+      (new Date(b.updated_at || 0) - new Date(a.updated_at || 0))
+    );
 
     list.replaceChildren();
 
