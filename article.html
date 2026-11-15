@@ -183,6 +183,19 @@ main {
   font-size: 1.5em;
 }
 
+/* 角丸マーカー */
+.article-body .compass-marker {
+  border-radius: .3em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+  padding: 0 .08em;
+}
+
+/* 下線の種類 */
+.article-body .compass-underline {
+  text-decoration-line: underline;
+}
+
 /* COMPASS 関連記事カード */
 .article-body a.compass-related {
   display: block;
@@ -561,11 +574,13 @@ main {
             continue;
           }
 
-          // 関連記事カードに必要なクラスのみ保持
+          /* 関連記事・マーカー・下線のクラスを保持 */
           if (name === 'class') {
             const permitted = {
               A: ['compass-related'],
               SPAN: [
+                'compass-marker',
+                'compass-underline',
                 'compass-related-label',
                 'compass-related-title',
                 'compass-related-note'
@@ -588,7 +603,7 @@ main {
             const parts = value.split(';')
               .map(part => part.trim())
               .filter(part =>
-                /^(color|background-color|font-size|font-weight|text-align|text-decoration|text-decoration-line|text-decoration-style|text-decoration-color)\s*:/i.test(part) &&
+                /^(color|background-color|font-size|font-weight|text-align|text-decoration|text-decoration-line|text-decoration-style|text-decoration-color|border-radius)\s*:/i.test(part) &&
                 !/[()\\]/.test(part)
               );
 
@@ -609,7 +624,7 @@ main {
 
           node.setAttribute('rel', 'noopener noreferrer');
 
-          // COMPASS内の記事リンクは同じタブで移動
+          /* COMPASS内の記事リンクは同じタブで移動 */
           node.setAttribute(
             'target',
             isInternalArticleURL(href) ? '_self' : '_blank'
@@ -688,11 +703,15 @@ main {
     }
 
     try {
-      const response = await fetch(
+      /* 毎回最新の公開記事を取得 */
+      const url =
         API + '/api/public/articles/' +
-        encodeURIComponent(id),
-        { cache: 'no-store' }
-      );
+        encodeURIComponent(id) +
+        '?v=' + Date.now();
+
+      const response = await fetch(url, {
+        cache: 'no-store'
+      });
 
       if (!response.ok) {
         if (response.status === 404) {
