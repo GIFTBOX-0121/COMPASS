@@ -66,7 +66,10 @@ button:disabled{opacity:.5}
 .marker-btn[data-color="remove"]::after{
  content:"×";font-size:23px;color:#64748b
 }
-.color-apply{background:#edf1f6;font-size:12px;padding:9px 11px}
+ .color-apply{background:#edf1f6;font-size:12px;padding:9px 11px}
+#editor .compass-marker{border-radius:.3em;-webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 .08em}
+#editor .compass-underline{text-decoration-line:underline}
+
 .item{border-top:1px solid #dce3ec;padding:13px 0}
 .item small{display:block;color:#728096;margin:5px 0}
 #message,#uploadStatus{font-size:13px;color:#344c68;white-space:pre-wrap}
@@ -212,6 +215,7 @@ button:disabled{opacity:.5}
 
 <input id="fontColor" type="color" value="#344c68" aria-label="文字色">
 <button type="button" id="applyColorBtn" class="color-apply">文字色を適用</button>
+<button type="button" id="defaultColorBtn" class="color-apply">デフォルト色に戻す</button>
 <button type="button" id="linkBtn">リンク設定・変更</button>
 <button type="button" id="unlinkBtn">リンク解除</button>
 <button type="button" id="relatedBtn">COMPASS記事を挿入</button>
@@ -370,6 +374,7 @@ function reset(){
  $('editor').scrollTop=0;
  $('fontSize').value='';
  $('fontColor').value='#344c68';
+ $('underlineStyle').value='';
  $('relatedPicker').classList.add('hidden');
  $('mode').className='mode';
  $('mode').textContent='✦ 新規記事を作成中';
@@ -553,6 +558,7 @@ function clean(html){
     const permitted={
      A:['compass-related'],
      SPAN:[
+      'compass-marker','compass-underline',
       'compass-related-label',
       'compass-related-title',
       'compass-related-note'
@@ -572,7 +578,7 @@ function clean(html){
     const parts=v.split(';')
      .map(x=>x.trim())
      .filter(x=>
-      /^(color|background-color|font-size|font-weight|text-align|text-decoration|text-decoration-line|text-decoration-style|text-decoration-color)\s*:/i.test(x)
+      /^(color|background-color|font-size|font-weight|text-align|text-decoration|text-decoration-line|text-decoration-style|text-decoration-color|border-radius)\s*:/i.test(x)
       && !/[()\\]/.test(x)
      );
 
@@ -643,19 +649,10 @@ async function editArticle(id){
 
 async function save(status){
  if(busy)return;
-
  const title=$('title').value.trim();
-
- if(!title){
-  alert('記事タイトルを入力してください');
-  return;
- }
-
+ if(!title){alert('記事タイトルを入力してください');return;}
  const id=editingId;
-
- if(id&&!confirm('既存の記事「'+editingTitle+'」を上書き保存します。よろしいですか？')){
-  return;
- }
+ if(id&&!confirm('既存の記事「'+editingTitle+'」を上書き保存します。よろしいですか？'))return;
 
  const data={
   category:$('category').value,
@@ -665,29 +662,48 @@ async function save(status){
   body_json:JSON.stringify({html:clean($('editor').innerHTML)}),
   status
  };
-
  busy=true;
  $('draftBtn').disabled=true;
  $('publishBtn').disabled=true;
-
  try{
-  await req(
+  const saved=await req(
    id?'/api/articles/'+encodeURIComponent(id):'/api/articles',
-   id?'PUT':'POST',
-   data
+   id?'PUT':'POST',data
   );
+  const savedId=saved.id||id;
+  if(!savedId)throw Error('保存後の記事IDを確認できませんでした');
+
+  // 保存完了を表示する前にD1から再取得し、本文まで一致するか検証
+  const checked=await req('/api/articles/'+encodeURIComponent(savedId));
+  const a=checked.article;
+  if(!a||a.body_json!==data.body_json||
+     a.title!==data.title||a.status!==data.status||
+     a.category!==data.category){
+   throw Error('保存後の本文・公開状態が一致しません。編集内容を残しています。');
+  }
+
+  // 公開した場合は、公開APIも最新本文を返すか確認
+  if(status==='published'){
+   const response=await fetch(
+    base()+'/api/public/articles/'+encodeURIComponent(savedId)+'?v='+Date.now(),
+    {cache:'no-store'}
+   );
+   if(!response.ok)throw Error('公開記事の取得確認に失敗しました（HTTP '+response.status+'）。編集内容を残しています。');
+   const publicData=await response.json();
+   if(publicData.article?.body_json!==data.body_json){
+    throw Error('公開ページ用APIの本文が更新されていません。編集内容を残しています。');
+   }
+  }
 
   reset();
   statusFilter=status;
   filter='all';
   await load();
-
   alert(status==='published'
-   ?'保存しました！次は新しい記事を登録できます。'
-   :'下書きを保存しました！次は新しい記事を登録できます。'
-  );
+   ?'本文と公開データの更新を確認しました。保存完了！'
+   :'下書きの本文が保存されたことを確認しました！');
  }catch(e){
-  alert('保存エラー: '+e.message);
+  alert('保存・反映確認エラー：'+e.message+'\\n編集画面は保持しています。');
  }finally{
   busy=false;
   $('draftBtn').disabled=false;
@@ -767,103 +783,103 @@ function insertNode(node){
  rememberSelection();
 }
 
-/* 下線：既存装飾を除去してから設定 */
+/* 書式操作：選択部分を包み、古い装飾の親要素から切り離す */
 function unwrapElement(el){
  if(!el.parentNode)return;
- const parent=el.parentNode;
- while(el.firstChild){
-  parent.insertBefore(el.firstChild,el);
- }
- el.remove();
- parent.normalize();
+ el.replaceWith(...Array.from(el.childNodes));
 }
-
-function clearUnderlineIn(root){
- const elements=Array.from(root.querySelectorAll('*')).reverse();
-
- for(const el of elements){
+function decorationParent(el,kind){
+ if(kind==='underline'){
+  return el.tagName==='U' ||
+   (el.style && (
+    el.style.textDecorationLine.includes('underline') ||
+    el.style.textDecoration.includes('underline')
+   ));
+ }
+ if(kind==='color')return el.tagName==='FONT'&&el.hasAttribute('color')||
+  !!(el.style&&el.style.color);
+ if(kind==='marker')return !!(el.style&&el.style.backgroundColor)||
+  el.classList.contains('compass-marker');
+ return false;
+}
+function stripDecoration(root,kind){
+ for(const el of Array.from(root.querySelectorAll('*')).reverse()){
   if(!el.isConnected)continue;
-
-  if(el.tagName==='U'){
-   unwrapElement(el);
-   continue;
-  }
-
-  if(el.style){
-   const line=el.style.getPropertyValue('text-decoration-line');
-   const shorthand=el.style.getPropertyValue('text-decoration');
-
-   if(
-    line.includes('underline') ||
-    shorthand.includes('underline') ||
-    el.style.textDecorationStyle
-   ){
-    el.style.removeProperty('text-decoration');
-    el.style.removeProperty('text-decoration-line');
-    el.style.removeProperty('text-decoration-style');
-    el.style.removeProperty('text-decoration-color');
-   }
+  if(kind==='underline'){
+   if(el.tagName==='U'){unwrapElement(el);continue;}
+   el.style?.removeProperty('text-decoration');
+   el.style?.removeProperty('text-decoration-line');
+   el.style?.removeProperty('text-decoration-style');
+   el.style?.removeProperty('text-decoration-color');
+   el.classList.remove('compass-underline');
+  }else if(kind==='color'){
+   if(el.tagName==='FONT')el.removeAttribute('color');
+   el.style?.removeProperty('color');
+  }else if(kind==='marker'){
+   el.style?.removeProperty('background-color');
+   el.style?.removeProperty('border-radius');
+   el.classList.remove('compass-marker');
   }
  }
 }
-
-function applyUnderline(style){
+function liftOutOfDecoratedAncestors(node,kind){
+ const editor=$('editor');
+ let guard=0;
+ while(node.parentElement&&node.parentElement!==editor&&guard++<60){
+  const ancestor=node.parentElement;
+  let parent=ancestor;
+  let hasDecoration=false;
+  while(parent&&parent!==editor){
+   if(decorationParent(parent,kind)){hasDecoration=true;break;}
+   parent=parent.parentElement;
+  }
+  if(!hasDecoration)break;
+  const before=ancestor.cloneNode(false);
+  const after=ancestor.cloneNode(false);
+  while(ancestor.firstChild&&ancestor.firstChild!==node)before.append(ancestor.firstChild);
+  while(node.nextSibling)after.append(node.nextSibling);
+  if(before.childNodes.length)ancestor.before(before);
+  ancestor.before(node);
+  if(after.childNodes.length)ancestor.before(after);
+  ancestor.remove();
+ }
+}
+function formatSelection(kind,value){
  const range=selectedRange();
-
  if(!range||range.collapsed){
-  alert('下線を変更したい文字を選択してください');
+  alert('変更したい文字を選択してください');
   return;
  }
-
  try{
   const fragment=range.extractContents();
   const span=document.createElement('span');
-
-  span.appendChild(fragment);
-  clearUnderlineIn(span);
-
-  if(style==='none'){
-   // 親要素から継承した下線も選択範囲で解除
-   span.style.textDecoration='none';
-  }else{
-   span.style.textDecorationLine='underline';
-   span.style.textDecorationStyle=style;
-  }
-
+  span.append(fragment);
+  stripDecoration(span,kind);
   range.insertNode(span);
-
-  const newRange=document.createRange();
-  newRange.selectNodeContents(span);
-
-  const s=window.getSelection();
-  s.removeAllRanges();
-  s.addRange(newRange);
-  selection=newRange.cloneRange();
-
+  liftOutOfDecoratedAncestors(span,kind);
+  if(kind==='underline'&&value!=='none'){
+   span.classList.add('compass-underline');
+   span.style.textDecorationLine='underline';
+   span.style.textDecorationStyle=value;
+  }
+  if(kind==='color'&&value!=='default')span.style.color=value;
+  if(kind==='marker'&&value!=='remove'){
+   span.classList.add('compass-marker');
+   span.style.backgroundColor=value;
+   span.style.borderRadius='.3em';
+  }
+  const updated=document.createRange();
+  updated.selectNodeContents(span);
+  const sel=window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(updated);
+  selection=updated.cloneRange();
  }catch(e){
-  alert('下線の変更に失敗しました。選択範囲を短くして試してください。');
+  alert('書式の変更に失敗しました。文字を選び直して試してください。');
  }
 }
-
-/* マーカー */
-function applyMarker(color){
- const range=selectedRange();
-
- if(!range||range.collapsed){
-  alert('マーカーを付けたい文字を選択してください');
-  return;
- }
-
- if(color==='remove'){
-  document.execCommand('hiliteColor',false,'transparent');
- }else{
-  document.execCommand('styleWithCSS',false,true);
-  document.execCommand('hiliteColor',false,color);
- }
-
- rememberSelection();
-}
-
+function applyUnderline(style){formatSelection('underline',style);}
+function applyMarker(color){formatSelection('marker',color);}
 /* リンク設定・変更・解除 */
 function linkAtRange(range){
  if(!range)return null;
@@ -1157,13 +1173,13 @@ $('fontSize').onchange=e=>{
  e.target.value='';
 };
 
-$('fontColor').oninput=()=>{
- applyCommand('foreColor',$('fontColor').value);
-};
+// 色選択中には本文を変更しない。適用ボタンでのみ変更する
+$('fontColor').oninput=()=>{};
 
 $('applyColorBtn').onclick=()=>{
- applyCommand('foreColor',$('fontColor').value);
+ formatSelection('color',$('fontColor').value);
 };
+$('defaultColorBtn').onclick=()=>formatSelection('color','default');
 
 document.querySelectorAll('.marker-btn').forEach(b=>{
  b.onclick=()=>{
