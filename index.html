@@ -574,9 +574,12 @@ function renderSearch() {
 
   const filtered = articles.filter(article => {
     const text = [
-      article.title,
-      article.summary,
-      categoryNames[article.category] || article.category
+      article.title || '',
+      article.summary || '',
+      article.search_keywords || '',
+      article.search_text || '',
+      categoryNames[article.category] || '',
+      article.category || ''
     ].join(' ').toLocaleLowerCase();
 
     return words.every(word => text.includes(word));
