@@ -192,8 +192,15 @@ main {
 }
 
 /* 下線の種類 */
+.article-body u,
+.article-body .compass-underline,
+.article-body [style*="text-decoration"] {
+  text-decoration-color: currentColor !important;
+}
+
 .article-body .compass-underline {
   text-decoration-line: underline;
+  text-decoration-color: currentColor;
 }
 
 /* COMPASS 関連記事カード */
@@ -457,6 +464,36 @@ main {
     }
   }
 
+  function safeArticleStyle(value) {
+    const allowed = new Set([
+      'color', 'background-color', 'font-size', 'font-weight',
+      'text-align', 'text-decoration', 'text-decoration-line',
+      'text-decoration-style', 'text-decoration-color', 'border-radius'
+    ]);
+    const color = /^(?:#[0-9a-f]{3,8}|(?:rgb|rgba|hsl|hsla)\(\s*[\d.%\s,/-]+\)|currentcolor|transparent|inherit|initial|unset|revert|[a-z]+)$/i;
+    const cleaned = [];
+    const declarations = document.createElement('span').style;
+    for (const part of value.split(';')) {
+      const colon = part.indexOf(':');
+      if (colon < 0) continue;
+      const name = part.slice(0, colon).trim().toLowerCase();
+      const val = part.slice(colon + 1).trim();
+      if (!allowed.has(name) || !val || /[\\<>]|url\s*\(|expression\s*\(|var\s*\(|@/i.test(val)) continue;
+      if (['color', 'background-color', 'text-decoration-color'].includes(name) && !color.test(val)) continue;
+      if (name === 'font-size' && !/^(?:\d+(?:\.\d+)?(?:px|pt|em|rem|%)|small|medium|large|larger|smaller|x-small|x-large|xx-large|inherit|initial|unset)$/i.test(val)) continue;
+      if (name === 'font-weight' && !/^(?:normal|bold|bolder|lighter|[1-9]00|inherit|initial|unset)$/i.test(val)) continue;
+      if (name === 'text-align' && !/^(?:left|right|center|justify|start|end|inherit|initial|unset)$/i.test(val)) continue;
+      if (name === 'text-decoration-style' && !/^(?:solid|double|dotted|dashed|wavy|inherit|initial|unset)$/i.test(val)) continue;
+      if (name === 'text-decoration-line' && !/^(?:none|underline|overline|line-through|underline overline|inherit|initial|unset)$/i.test(val)) continue;
+      if (name === 'text-decoration' && !/^(?:none|underline|overline|line-through|solid|double|dotted|dashed|wavy|currentcolor|#[0-9a-f]{3,8}|\s)+$/i.test(val)) continue;
+      if (name === 'border-radius' && !/^(?:\d+(?:\.\d+)?(?:px|em|rem|%)|0|inherit|initial|unset)$/i.test(val)) continue;
+      declarations.setProperty(name, val);
+      if (declarations.getPropertyValue(name)) cleaned.push(name + ': ' + declarations.getPropertyValue(name));
+      declarations.removeProperty(name);
+    }
+    return cleaned.join('; ');
+  }
+
   function cleanHTML(html) {
     const doc = new DOMParser().parseFromString(
       '<div>' + html + '</div>',
@@ -600,19 +637,9 @@ main {
           }
 
           if (name === 'style') {
-            const parts = value.split(';')
-              .map(part => part.trim())
-              .filter(part =>
-                /^(color|background-color|font-size|font-weight|text-align|text-decoration|text-decoration-line|text-decoration-style|text-decoration-color|border-radius)\s*:/i.test(part) &&
-                !/[()\\]/.test(part)
-              );
-
-            if (parts.length) {
-              node.setAttribute('style', parts.join(';'));
-            } else {
-              node.removeAttribute('style');
-            }
-
+            const safe = safeArticleStyle(value);
+            if (safe) node.setAttribute('style', safe);
+            else node.removeAttribute('style');
             continue;
           }
 
@@ -638,6 +665,16 @@ main {
     sanitize(root);
 
     return root.innerHTML;
+  }
+
+  function synchronizeUnderlineColors(root) {
+    for (const el of root.querySelectorAll('u, .compass-underline, [style*="text-decoration"]')) {
+      if (el.matches('u, .compass-underline') ||
+          el.style.textDecorationLine.includes('underline') ||
+          el.style.textDecoration.includes('underline')) {
+        el.style.textDecorationColor = 'currentColor';
+      }
+    }
   }
 
   function renderArticle(article) {
@@ -687,6 +724,7 @@ main {
         : '';
 
     $('articleBody').innerHTML = cleanHTML(html);
+    synchronizeUnderlineColors($('articleBody'));
 
     $('message').hidden = true;
     $('articlePanel').hidden = false;
