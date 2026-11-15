@@ -68,7 +68,7 @@ button:disabled{opacity:.5}
 }
  .color-apply{background:#edf1f6;font-size:12px;padding:9px 11px}
 #editor .compass-marker{border-radius:.3em;-webkit-box-decoration-break:clone;box-decoration-break:clone;padding:0 .08em}
-#editor .compass-underline{text-decoration-line:underline}
+#editor .compass-underline{text-decoration-line:underline;text-decoration-color:currentColor}
 
 .item{border-top:1px solid #dce3ec;padding:13px 0}
 .item small{display:block;color:#728096;margin:5px 0}
@@ -804,7 +804,6 @@ function decorationParent(el,kind){
 }
 function stripDecoration(root,kind){
  for(const el of Array.from(root.querySelectorAll('*')).reverse()){
-  if(!el.isConnected)continue;
   if(kind==='underline'){
    if(el.tagName==='U'){unwrapElement(el);continue;}
    el.style?.removeProperty('text-decoration');
@@ -851,6 +850,21 @@ function formatSelection(kind,value){
   return;
  }
  try{
+  // 親に下線がある場合は、文字色変更後も下線を保持する
+  let inheritedUnderline=null;
+  if(kind==='color'){
+   let parent=range.commonAncestorContainer;
+   if(parent.nodeType===Node.TEXT_NODE)parent=parent.parentElement;
+   while(parent&&parent!==$('editor')){
+    if(parent.tagName==='U'||parent.classList?.contains('compass-underline')||
+       parent.style?.textDecorationLine?.includes('underline')||
+       parent.style?.textDecoration?.includes('underline')){
+     inheritedUnderline=parent.style?.textDecorationStyle||'solid';
+     break;
+    }
+    parent=parent.parentElement;
+   }
+  }
   const fragment=range.extractContents();
   const span=document.createElement('span');
   span.append(fragment);
@@ -862,7 +876,23 @@ function formatSelection(kind,value){
    span.style.textDecorationLine='underline';
    span.style.textDecorationStyle=value;
   }
-  if(kind==='color'&&value!=='default')span.style.color=value;
+  if(kind==='color'&&inheritedUnderline){
+   span.classList.add('compass-underline');
+   span.style.textDecorationLine='underline';
+   span.style.textDecorationStyle=inheritedUnderline;
+  }
+  if(kind==='color'){
+   // 色を変更した文字と、その範囲内の下線を必ず同じ色にする。
+   // デフォルト色へ戻す場合は、固定色を解除して継承させる。
+   if(value!=='default')span.style.color=value;
+   for(const el of [span,...span.querySelectorAll('*')]){
+    if(el.tagName==='U'||el.classList.contains('compass-underline')||
+       el.style?.textDecorationLine?.includes('underline')||
+       el.style?.textDecoration?.includes('underline')){
+     el.style.textDecorationColor='currentColor';
+    }
+   }
+  }
   if(kind==='marker'&&value!=='remove'){
    span.classList.add('compass-marker');
    span.style.backgroundColor=value;
