@@ -492,12 +492,28 @@ function render(){
   edit.textContent='編集';
   edit.onclick=()=>editArticle(a.id);
 
+  const pin=document.createElement('button');
+  pin.className='light';
+  pin.textContent=a.pinned?'📌 固定を解除':'📌 上部に固定';
+  pin.setAttribute('aria-pressed',String(Boolean(a.pinned)));
+  pin.onclick=async()=>{
+   if(busy)return;
+   pin.disabled=true;
+   try{
+    await req('/api/articles/'+encodeURIComponent(a.id)+'/pin','PUT',{pinned:!Boolean(a.pinned)});
+    await load();
+   }catch(e){
+    alert('固定設定の変更に失敗しました: '+e.message);
+    pin.disabled=false;
+   }
+  };
+
   const del=document.createElement('button');
   del.className='danger';
   del.textContent='削除';
   del.onclick=()=>deleteArticle(a.id,a.title);
 
-  buttons.append(edit,del);
+  buttons.append(edit,pin,del);
   item.append(name,info,buttons);
   root.append(item);
  }
