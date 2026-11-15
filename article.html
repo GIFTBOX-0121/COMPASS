@@ -183,6 +183,50 @@ main {
   font-size: 1.5em;
 }
 
+/* COMPASS 関連記事カード */
+.article-body a.compass-related {
+  display: block;
+  margin: 20px 0;
+  padding: 15px 18px;
+  border: 1px solid #dce3ec;
+  border-left: 4px solid var(--gold);
+  border-radius: 12px;
+  background: #f8fafc;
+  color: var(--navy);
+  text-decoration: none;
+  transition: background .2s, border-color .2s;
+}
+
+.article-body a.compass-related:hover {
+  background: #eef2f6;
+  border-color: #bdcad7;
+  border-left-color: var(--gold);
+}
+
+.article-body .compass-related-label {
+  display: block;
+  margin-bottom: 5px;
+  color: #728096;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .08em;
+}
+
+.article-body .compass-related-title {
+  display: block;
+  color: var(--navy);
+  font-size: 16px;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.article-body .compass-related-note {
+  display: block;
+  margin-top: 6px;
+  color: #728096;
+  font-size: 12px;
+}
+
 .bottom-nav {
   display: flex;
   flex-wrap: wrap;
@@ -230,6 +274,10 @@ main {
 
   .article-body {
     font-size: 14px;
+  }
+
+  .article-body .compass-related-title {
+    font-size: 15px;
   }
 }
 </style>
@@ -382,6 +430,20 @@ main {
     }
   }
 
+  function isInternalArticleURL(value) {
+    try {
+      const url = new URL(value);
+
+      return (
+        url.origin === location.origin &&
+        url.pathname.endsWith('/article.html') &&
+        url.searchParams.has('id')
+      );
+    } catch {
+      return false;
+    }
+  }
+
   function cleanHTML(html) {
     const doc = new DOMParser().parseFromString(
       '<div>' + html + '</div>',
@@ -404,8 +466,6 @@ main {
       'LINK', 'TEMPLATE'
     ]);
 
-    // 親要素から順番に確認する。
-    // 禁止要素は子要素ごと取り除く。
     function sanitize(parent) {
       for (const node of Array.from(parent.childNodes)) {
         if (node.nodeType === Node.COMMENT_NODE) {
@@ -501,6 +561,29 @@ main {
             continue;
           }
 
+          // 関連記事カードに必要なクラスのみ保持
+          if (name === 'class') {
+            const permitted = {
+              A: ['compass-related'],
+              SPAN: [
+                'compass-related-label',
+                'compass-related-title',
+                'compass-related-note'
+              ]
+            };
+
+            const valid = (permitted[node.tagName] || [])
+              .filter(cls => node.classList.contains(cls));
+
+            if (valid.length) {
+              node.className = valid.join(' ');
+            } else {
+              node.removeAttribute('class');
+            }
+
+            continue;
+          }
+
           if (name === 'style') {
             const parts = value.split(';')
               .map(part => part.trim())
@@ -522,8 +605,15 @@ main {
         }
 
         if (node.tagName === 'A') {
+          const href = node.getAttribute('href') || '';
+
           node.setAttribute('rel', 'noopener noreferrer');
-          node.setAttribute('target', '_blank');
+
+          // COMPASS内の記事リンクは同じタブで移動
+          node.setAttribute(
+            'target',
+            isInternalArticleURL(href) ? '_self' : '_blank'
+          );
         }
 
         sanitize(node);
