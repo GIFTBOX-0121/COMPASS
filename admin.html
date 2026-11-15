@@ -31,87 +31,42 @@ button:disabled{opacity:.5}
 .remember input{width:20px;height:20px;accent-color:var(--gold)}
 .mode{padding:12px;border-radius:9px;background:#edf1f6;color:var(--navy);font-weight:bold}
 .mode.edit{background:#fff3d9;color:#755512}
-
-/* 本文エディター */
-
-.toolbar{
- display:flex;
- flex-wrap:wrap;
- gap:6px;
- margin:10px 0;
-}
+.toolbar{display:flex;flex-wrap:wrap;gap:6px;margin:10px 0}
 .toolbar button{background:#edf1f6}
 .toolbar select{width:auto;max-width:180px}
-.toolbar input[type=color]{
- width:45px;
- padding:2px;
- height:40px;
-}
+.toolbar input[type=color]{width:45px;padding:2px;height:40px}
 #editor{
- border:1px solid #cbd5e1;
- border-radius:10px;
- padding:14px;
- height:min(85vw,390px);
- min-height:270px;
- max-height:390px;
- overflow-y:auto;
- overscroll-behavior:contain;
- -webkit-overflow-scrolling:touch;
- line-height:1.8;
- overflow-wrap:anywhere;
- outline:none;
- background:white;
+ border:1px solid #cbd5e1;border-radius:10px;padding:14px;
+ height:min(85vw,390px);min-height:270px;max-height:390px;
+ overflow-y:auto;overscroll-behavior:contain;
+ -webkit-overflow-scrolling:touch;line-height:1.8;
+ overflow-wrap:anywhere;outline:none;background:white
 }
 #editor:focus{border-color:#93a2b0}
 #editor img,#editor video{max-width:100%;height:auto}
 #editor video{display:block;margin:10px 0}
-.editor-help{
- margin:7px 0 10px;
- font-size:12px;
- color:#69798c;
-}
+.editor-help{margin:7px 0 10px;font-size:12px;color:#69798c}
 .marker-tools{
- display:flex;
- align-items:center;
- flex-wrap:wrap;
- gap:6px;
- padding:8px;
- border:1px solid #dce3ec;
- border-radius:10px;
- background:#f8fafc;
+ display:flex;align-items:center;flex-wrap:wrap;gap:6px;
+ padding:8px;border:1px solid #dce3ec;
+ border-radius:10px;background:#f8fafc
 }
-.marker-tools span{
- font-size:12px;
- font-weight:700;
- margin-right:4px;
-}
+.marker-tools span{font-size:12px;font-weight:700;margin-right:4px}
 .marker-btn{
- width:35px;
- height:35px;
- padding:0;
- border:1px solid #cbd5e1;
- border-radius:8px;
- position:relative;
+ width:35px;height:35px;padding:0;border:1px solid #cbd5e1;
+ border-radius:8px;position:relative
 }
-.marker-btn.active{
- outline:2px solid var(--navy);
- outline-offset:2px;
-}
+.marker-btn.active{outline:2px solid var(--navy);outline-offset:2px}
 .marker-btn[data-color="#fff1a8"]{background:#fff1a8}
 .marker-btn[data-color="#ffd5df"]{background:#ffd5df}
 .marker-btn[data-color="#cdebff"]{background:#cdebff}
 .marker-btn[data-color="#ddf2c9"]{background:#ddf2c9}
+.marker-btn[data-color="#remove"]{background:white}
 .marker-btn[data-color="remove"]{background:white}
 .marker-btn[data-color="remove"]::after{
- content:"×";
- font-size:23px;
- color:#64748b;
+ content:"×";font-size:23px;color:#64748b
 }
-.color-apply{
- background:#edf1f6;
- font-size:12px;
- padding:9px 11px;
-}
+.color-apply{background:#edf1f6;font-size:12px;padding:9px 11px}
 .item{border-top:1px solid #dce3ec;padding:13px 0}
 .item small{display:block;color:#728096;margin:5px 0}
 #message,#uploadStatus{font-size:13px;color:#344c68;white-space:pre-wrap}
@@ -121,69 +76,67 @@ button:disabled{opacity:.5}
 .status-tabs{border-bottom:1px solid #dce3ec;padding-bottom:9px;margin-top:3px}
 .status-tabs button{flex:1;font-weight:700}
 .status-tabs button.active{background:var(--gold);color:white}
-
-/* スマホ用・キーボード上のツールバー */
-
+.related-picker{
+ border:1px solid #dce3ec;border-radius:12px;
+ background:#f8fafc;padding:13px;margin:10px 0
+}
+.related-picker input{margin-bottom:8px}
+.related-list{max-height:240px;overflow:auto}
+.related-choice{
+ display:block;width:100%;text-align:left;
+ padding:11px;margin:5px 0;background:white;
+ border:1px solid #dce3ec;color:#273648
+}
+.related-choice small{display:block;color:#728096;margin-top:4px}
+#editor a.compass-related{
+ display:block;text-decoration:none;color:#273648;
+ border:1px solid #dce3ec;border-left:4px solid #c49a42;
+ border-radius:10px;background:#f8fafc;
+ padding:12px 15px;margin:12px 0
+}
+#editor .compass-related-label{
+ display:block;color:#728096;font-size:12px
+}
+#editor .compass-related-title{
+ display:block;font-weight:700;color:#344c68
+}
+#editor .compass-related-note{
+ display:block;font-size:12px;color:#728096
+}
 @media(max-width:767px){
- body.editor-active{
-  padding-bottom:110px;
- }
+ body.editor-active{padding-bottom:110px}
  body.editor-active .toolbar,
  body.editor-active .marker-tools{
-  position:fixed;
-  left:8px;
-  right:8px;
-  z-index:9999;
-  margin:0;
-  background:rgba(255,255,255,.97);
+  position:fixed;left:8px;right:8px;z-index:9999;
+  margin:0;background:rgba(255,255,255,.97);
   border:1px solid #dce3ec;
-  box-shadow:0 -3px 18px #344c6820;
+  box-shadow:0 -3px 18px #344c6820
  }
  body.editor-active .toolbar{
   bottom:calc(var(--keyboard-offset,0px) + 49px);
-  display:flex;
-  flex-wrap:nowrap;
-  overflow-x:auto;
-  overflow-y:hidden;
-  gap:6px;
-  padding:7px 9px;
+  display:flex;flex-wrap:nowrap;overflow-x:auto;
+  overflow-y:hidden;gap:6px;padding:7px 9px;
   border-radius:12px 12px 0 0;
-  scrollbar-width:none;
-  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;-webkit-overflow-scrolling:touch
  }
- body.editor-active .toolbar::-webkit-scrollbar{
-  display:none;
- }
- body.editor-active .toolbar>*{
-  flex:0 0 auto;
- }
- body.editor-active .toolbar button{
-  white-space:nowrap;
-  min-height:36px;
- }
+ body.editor-active .toolbar::-webkit-scrollbar{display:none}
+ body.editor-active .toolbar>*{flex:0 0 auto}
+ body.editor-active .toolbar button{white-space:nowrap;min-height:36px}
  body.editor-active .toolbar select{
-  max-width:125px;
-  min-height:36px;
-  padding:6px;
+  max-width:125px;min-height:36px;padding:6px
  }
  body.editor-active .marker-tools{
-  bottom:var(--keyboard-offset,0px);
-  height:49px;
-  flex-wrap:nowrap;
-  overflow-x:auto;
-  padding:6px 10px;
-  border-radius:0 0 12px 12px;
+  bottom:var(--keyboard-offset,0px);height:49px;
+  flex-wrap:nowrap;overflow-x:auto;padding:6px 10px;
+  border-radius:0 0 12px 12px
  }
- body.editor-active .marker-btn{
-  flex:0 0 35px;
- }
+ body.editor-active .marker-btn{flex:0 0 35px}
 }
 </style>
 </head>
 <body>
 <header><h1>COMPASS</h1></header>
 <main>
-
 <section class="panel" id="loginPanel">
 <h2>◆ 管理者認証</h2>
 <label>Worker URL</label>
@@ -226,14 +179,22 @@ button:disabled{opacity:.5}
 <label>記事タイトル</label>
 <input id="title" maxlength="180" placeholder="記事のタイトル">
 
-<label>本文</label>
+<label>検索キーワード</label>
+<textarea id="searchKeywords" maxlength="3000"
+ placeholder="例：CD、円盤、フィジカル、オリコン"></textarea>
+<p class="note">
+カンマ・読点・改行で区切って複数登録できます。
+検索用なので記事本文には表示されません。
+</p>
 
+<label>本文</label>
 <div class="toolbar">
 <button type="button" data-cmd="bold"><b>B</b></button>
 <button type="button" data-cmd="italic"><i>I</i></button>
 
 <select id="underlineStyle" aria-label="下線の種類">
-<option value="">下線なし</option>
+<option value="">下線を変更</option>
+<option value="none">下線なし</option>
 <option value="solid">下線 ─</option>
 <option value="double">二重 ═</option>
 <option value="wavy">波線 ﹏</option>
@@ -251,8 +212,9 @@ button:disabled{opacity:.5}
 
 <input id="fontColor" type="color" value="#344c68" aria-label="文字色">
 <button type="button" id="applyColorBtn" class="color-apply">文字色を適用</button>
-
-<button type="button" id="linkBtn">リンク</button>
+<button type="button" id="linkBtn">リンク設定・変更</button>
+<button type="button" id="unlinkBtn">リンク解除</button>
+<button type="button" id="relatedBtn">COMPASS記事を挿入</button>
 <button type="button" id="imageUrlBtn">画像URL</button>
 <button type="button" id="imageFileBtn">写真を選ぶ</button>
 <button type="button" id="videoUrlBtn">動画URL</button>
@@ -268,8 +230,16 @@ button:disabled{opacity:.5}
 <button type="button" class="marker-btn" data-color="remove" aria-label="マーカーを消す"></button>
 </div>
 
+<div id="relatedPicker" class="related-picker hidden">
+<label for="relatedSearch">挿入する公開記事を選択</label>
+<input id="relatedSearch" type="search" placeholder="記事タイトルで検索">
+<div id="relatedList" class="related-list"></div>
+<button type="button" id="closeRelatedBtn" class="light">閉じる</button>
+</div>
+
 <p class="editor-help">
 文字を選択してから書式を設定してください。本文は枠内をスクロールできます。
+リンクの変更はリンク内にカーソルを置いて操作できます。
 </p>
 
 <input id="imageInput" class="hidden" type="file" accept="image/jpeg,image/png,image/webp,image/gif">
@@ -282,7 +252,6 @@ button:disabled{opacity:.5}
 <button id="draftBtn" class="light">下書き保存</button>
 <button id="publishBtn" class="gold">公開する</button>
 </div>
-
 <button id="resetBtn" class="light" style="width:100%;margin-top:10px">
 新しい記事を書く
 </button>
@@ -395,11 +364,13 @@ function reset(){
  editingSummary='';
  selection=null;
  $('title').value='';
+ $('searchKeywords').value='';
  $('category').value='physical';
  $('editor').innerHTML='';
  $('editor').scrollTop=0;
  $('fontSize').value='';
  $('fontColor').value='#344c68';
+ $('relatedPicker').classList.add('hidden');
  $('mode').className='mode';
  $('mode').textContent='✦ 新規記事を作成中';
  $('formHeading').textContent='新しい記事';
@@ -578,6 +549,25 @@ function clean(html){
    if(n==='size'&&el.tagName==='FONT'&&/^[1-7]$/.test(v))continue;
    if(n==='color'&&el.tagName==='FONT'&&/^#[0-9a-f]{3,8}$/i.test(v))continue;
 
+   if(n==='class'){
+    const permitted={
+     A:['compass-related'],
+     SPAN:[
+      'compass-related-label',
+      'compass-related-title',
+      'compass-related-note'
+     ]
+    };
+    const valid=(permitted[el.tagName]||[])
+     .filter(c=>el.classList.contains(c));
+    if(valid.length){
+     el.className=valid.join(' ');
+    }else{
+     el.removeAttribute('class');
+    }
+    continue;
+   }
+
    if(n==='style'){
     const parts=v.split(';')
      .map(x=>x.trim())
@@ -609,7 +599,11 @@ async function editArticle(id){
  if(busy)return;
 
  if(
-  ($('title').value.trim()||$('editor').textContent.trim())
+  (
+   $('title').value.trim()||
+   $('searchKeywords').value.trim()||
+   $('editor').textContent.trim()
+  )
   &&!confirm('現在入力中の内容を破棄して記事を編集しますか？')
  )return;
 
@@ -623,6 +617,7 @@ async function editArticle(id){
 
   $('category').value=a.category;
   $('title').value=a.title;
+  $('searchKeywords').value=a.search_keywords||'';
 
   let body={};
   try{
@@ -666,6 +661,7 @@ async function save(status){
   category:$('category').value,
   title,
   summary:editingSummary,
+  search_keywords:$('searchKeywords').value.trim(),
   body_json:JSON.stringify({html:clean($('editor').innerHTML)}),
   status
  };
@@ -712,17 +708,22 @@ async function deleteArticle(id,title){
  }
 }
 
-/* 選択範囲を保持 */
+/* 選択範囲の保持 */
+function rangeInsideEditor(range){
+ return !!range &&
+  $('editor').contains(range.startContainer) &&
+  $('editor').contains(range.endContainer);
+}
 
 function rememberSelection(){
  const s=window.getSelection();
- if(s&&s.rangeCount&&$('editor').contains(s.anchorNode)){
+ if(s&&s.rangeCount&&rangeInsideEditor(s.getRangeAt(0))){
   selection=s.getRangeAt(0).cloneRange();
  }
 }
 
 function restoreSelection(){
- if(selection){
+ if(selection&&rangeInsideEditor(selection)){
   const s=window.getSelection();
   s.removeAllRanges();
   s.addRange(selection.cloneRange());
@@ -732,27 +733,18 @@ function restoreSelection(){
 
 function selectedRange(){
  restoreSelection();
-
  const s=window.getSelection();
  if(!s||!s.rangeCount)return null;
-
  const range=s.getRangeAt(0);
-
- if(!$('editor').contains(range.commonAncestorContainer)){
-  return null;
- }
-
- return range;
+ return rangeInsideEditor(range)?range:null;
 }
 
 function applyCommand(command,value){
  const range=selectedRange();
-
  if(!range||range.collapsed){
   alert('書式を変えたい文字を選択してください');
   return;
  }
-
  document.execCommand(command,false,value);
  rememberSelection();
 }
@@ -761,7 +753,7 @@ function insertNode(node){
  restoreSelection();
  const s=window.getSelection();
 
- if(s&&s.rangeCount&&$('editor').contains(s.anchorNode)){
+ if(s&&s.rangeCount&&rangeInsideEditor(s.getRangeAt(0))){
   const range=s.getRangeAt(0);
   range.deleteContents();
   range.insertNode(node);
@@ -772,46 +764,88 @@ function insertNode(node){
  }else{
   $('editor').append(node);
  }
-
  rememberSelection();
+}
+
+/* 下線：既存装飾を除去してから設定 */
+function unwrapElement(el){
+ if(!el.parentNode)return;
+ const parent=el.parentNode;
+ while(el.firstChild){
+  parent.insertBefore(el.firstChild,el);
+ }
+ el.remove();
+ parent.normalize();
+}
+
+function clearUnderlineIn(root){
+ const elements=Array.from(root.querySelectorAll('*')).reverse();
+
+ for(const el of elements){
+  if(!el.isConnected)continue;
+
+  if(el.tagName==='U'){
+   unwrapElement(el);
+   continue;
+  }
+
+  if(el.style){
+   const line=el.style.getPropertyValue('text-decoration-line');
+   const shorthand=el.style.getPropertyValue('text-decoration');
+
+   if(
+    line.includes('underline') ||
+    shorthand.includes('underline') ||
+    el.style.textDecorationStyle
+   ){
+    el.style.removeProperty('text-decoration');
+    el.style.removeProperty('text-decoration-line');
+    el.style.removeProperty('text-decoration-style');
+    el.style.removeProperty('text-decoration-color');
+   }
+  }
+ }
 }
 
 function applyUnderline(style){
  const range=selectedRange();
 
  if(!range||range.collapsed){
-  alert('下線を付けたい文字を選択してください');
+  alert('下線を変更したい文字を選択してください');
   return;
  }
 
- const span=document.createElement('span');
-
- if(style){
-  span.style.textDecorationLine='underline';
-  span.style.textDecorationStyle=style;
- }else{
-  span.style.textDecoration='none';
- }
-
  try{
-  span.append(range.extractContents());
+  const fragment=range.extractContents();
+  const span=document.createElement('span');
+
+  span.appendChild(fragment);
+  clearUnderlineIn(span);
+
+  if(style==='none'){
+   // 親要素から継承した下線も選択範囲で解除
+   span.style.textDecoration='none';
+  }else{
+   span.style.textDecorationLine='underline';
+   span.style.textDecorationStyle=style;
+  }
+
   range.insertNode(span);
+
+  const newRange=document.createRange();
+  newRange.selectNodeContents(span);
 
   const s=window.getSelection();
   s.removeAllRanges();
+  s.addRange(newRange);
+  selection=newRange.cloneRange();
 
-  const r=document.createRange();
-  r.selectNodeContents(span);
-  s.addRange(r);
-
-  rememberSelection();
  }catch(e){
-  alert('文字の選択範囲を少し短くして試してください');
+  alert('下線の変更に失敗しました。選択範囲を短くして試してください。');
  }
 }
 
 /* マーカー */
-
 function applyMarker(color){
  const range=selectedRange();
 
@@ -830,8 +864,181 @@ function applyMarker(color){
  rememberSelection();
 }
 
-/* アップロード */
+/* リンク設定・変更・解除 */
+function linkAtRange(range){
+ if(!range)return null;
 
+ const nodes=[
+  range.startContainer,
+  range.endContainer,
+  range.commonAncestorContainer
+ ];
+
+ for(let node of nodes){
+  if(node.nodeType===Node.TEXT_NODE){
+   node=node.parentElement;
+  }
+
+  if(node instanceof Element){
+   const a=node.closest('a');
+   if(a&&$('editor').contains(a)){
+    return a;
+   }
+  }
+ }
+
+ return null;
+}
+
+function insertLink(url,text){
+ const a=document.createElement('a');
+ a.href=url;
+ a.textContent=text;
+ a.rel='noopener noreferrer';
+ insertNode(a);
+}
+
+$('linkBtn').onclick=()=>{
+ const range=selectedRange();
+ const existing=linkAtRange(range);
+
+ const url=prompt(
+  existing?'リンク先URLを変更':'リンク先URLを入力',
+  existing?.getAttribute('href')||'https://'
+ );
+
+ if(url===null)return;
+
+ if(!safeUrl(url)){
+  alert('http:// または https:// のURLを入力してください');
+  return;
+ }
+
+ if(existing){
+  existing.href=url;
+  rememberSelection();
+  return;
+ }
+
+ if(range&&!range.collapsed){
+  restoreSelection();
+
+  // 選択した文字にリンクを設定
+  document.execCommand('createLink',false,url);
+
+  rememberSelection();
+  return;
+ }
+
+ const text=prompt('リンクとして表示する文字',url);
+ if(text===null||!text.trim())return;
+
+ insertLink(url,text.trim());
+};
+
+$('unlinkBtn').onclick=()=>{
+ const range=selectedRange();
+
+ if(!range){
+  alert('リンク内にカーソルを置くか、文字を選択してください');
+  return;
+ }
+
+ const existing=linkAtRange(range);
+
+ if(existing){
+  unwrapElement(existing);
+  selection=null;
+  return;
+ }
+
+ if(range.collapsed){
+  alert('リンクを解除したい文字を選択してください');
+  return;
+ }
+
+ document.execCommand('unlink',false,null);
+ rememberSelection();
+};
+
+/* COMPASS内の関連記事 */
+function renderRelatedChoices(){
+ const root=$('relatedList');
+ root.replaceChildren();
+
+ const words=$('relatedSearch').value
+  .trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
+
+ const candidates=articles.filter(a=>
+  a.status==='published' &&
+  a.id!==editingId &&
+  words.every(w=>(a.title||'').toLocaleLowerCase().includes(w))
+ );
+
+ if(!candidates.length){
+  root.textContent='該当する公開記事がありません。';
+  return;
+ }
+
+ for(const a of candidates){
+  const b=document.createElement('button');
+  b.type='button';
+  b.className='related-choice';
+  b.textContent=a.title;
+
+  const small=document.createElement('small');
+  small.textContent=names[a.category]||a.category;
+  b.append(small);
+
+  b.onclick=()=>{
+   const link=document.createElement('a');
+   link.href=new URL(
+    'article.html?id='+encodeURIComponent(a.id),
+    location.href
+   ).href;
+   link.className='compass-related';
+   link.rel='noopener noreferrer';
+
+   const label=document.createElement('span');
+   label.className='compass-related-label';
+   label.textContent='関連記事';
+
+   const title=document.createElement('span');
+   title.className='compass-related-title';
+   title.textContent=a.title;
+
+   const note=document.createElement('span');
+   note.className='compass-related-note';
+   note.textContent='こちらの記事もあわせてチェック！';
+
+   link.append(label,title,note);
+   insertNode(link);
+
+   $('relatedPicker').classList.add('hidden');
+   $('relatedSearch').value='';
+  };
+
+  root.append(b);
+ }
+}
+
+$('relatedBtn').onclick=()=>{
+ rememberSelection();
+ $('relatedPicker').classList.toggle('hidden');
+
+ if(!$('relatedPicker').classList.contains('hidden')){
+  $('relatedSearch').value='';
+  renderRelatedChoices();
+  $('relatedSearch').focus();
+ }
+};
+
+$('relatedSearch').oninput=renderRelatedChoices;
+$('closeRelatedBtn').onclick=()=>{
+ $('relatedPicker').classList.add('hidden');
+};
+
+/* アップロード */
 async function upload(file,kind){
  if(!file)return;
 
@@ -895,7 +1102,6 @@ async function upload(file,kind){
 }
 
 /* 操作イベント */
-
 $('loginBtn').onclick=()=>login(false);
 $('logoutBtn').onclick=logout;
 $('forgetBtn').onclick=forgetToken;
@@ -907,6 +1113,7 @@ $('resetBtn').onclick=()=>{
  if(
   (
    $('title').value.trim()
+   ||$('searchKeywords').value.trim()
    ||$('editor').textContent.trim()
    ||$('editor').querySelector('img,video')
   )
@@ -918,7 +1125,6 @@ $('resetBtn').onclick=()=>{
 
 $('editor').addEventListener('mouseup',rememberSelection);
 $('editor').addEventListener('keyup',rememberSelection);
-
 $('editor').addEventListener('touchend',()=>{
  setTimeout(rememberSelection,100);
 });
@@ -937,17 +1143,17 @@ document.querySelectorAll('[data-cmd]').forEach(b=>{
 });
 
 $('underlineStyle').onchange=e=>{
- applyUnderline(e.target.value);
+ if(e.target.value){
+  applyUnderline(e.target.value);
+ }
  e.target.value='';
 };
 
 $('fontSize').onchange=e=>{
  const value=e.target.value;
-
  if(value){
   applyCommand('fontSize',value);
  }
-
  e.target.value='';
 };
 
@@ -964,16 +1170,6 @@ document.querySelectorAll('.marker-btn').forEach(b=>{
   applyMarker(b.dataset.color);
  };
 });
-
-$('linkBtn').onclick=()=>{
- const url=prompt('リンク先URL（https://）');
-
- if(url&&safeUrl(url)){
-  restoreSelection();
-  document.execCommand('createLink',false,url);
-  rememberSelection();
- }
-};
 
 $('imageUrlBtn').onclick=()=>{
  const url=prompt('画像URL（https://）');
@@ -1050,7 +1246,6 @@ $('videoInput').onchange=e=>{
 
 $('editor').addEventListener('paste',e=>{
  e.preventDefault();
-
  document.execCommand(
   'insertText',
   false,
@@ -1059,7 +1254,6 @@ $('editor').addEventListener('paste',e=>{
 });
 
 /* iPhoneキーボード上の書式ツールバー */
-
 (function setupFloatingToolbar(){
  const editor=$('editor');
  const viewport=window.visualViewport;
@@ -1128,7 +1322,6 @@ $('editor').addEventListener('paste',e=>{
 })();
 
 /* 保存済みの認証キー */
-
 const saved=localStorage.getItem(TOKEN_KEY);
 
 if(saved){
