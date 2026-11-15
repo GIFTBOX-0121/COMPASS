@@ -1,1 +1,37 @@
-
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>再生list Account 一覧 | COMPASS</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f6f5f8;color:#222331;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Yu Gothic",sans-serif}
+header{background:#181b2a;color:#fff;padding:32px 16px;text-align:center}
+header small{letter-spacing:.23em;color:#d4cbd7}
+h1{margin:9px 0 4px;font-size:28px;letter-spacing:.1em}
+header p{font-size:12px;color:#d8d8df;margin:0}
+.wrap{max-width:740px;margin:auto;padding:25px 14px 60px}
+.accounts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.account{display:flex;align-items:center;gap:10px;min-width:0;text-decoration:none;color:inherit;padding:13px 11px;border:1px solid #e4e1e9;border-radius:12px;background:#fff;transition:box-shadow .2s,transform .2s}
+.account:hover{box-shadow:0 6px 18px #28243a12;transform:translateY(-2px)}
+.avatar{width:43px;height:43px;border-radius:50%;flex:none;background:#e9e6ed;border:1px solid #e4e1e9;display:flex;align-items:center;justify-content:center;font-size:21px}
+.info{min-width:0;flex:1}.name{font-size:13px;font-weight:750;line-height:1.45;overflow-wrap:anywhere}.handle{font-size:11px;color:#85808d;margin-top:3px;overflow-wrap:anywhere}.arrow{font-size:14px;color:#918d99;flex:none}
+@media(max-width:420px){.accounts{gap:8px}.account{padding:10px 7px;gap:7px}.avatar{width:34px;height:34px;font-size:17px}.name{font-size:12px}.handle{font-size:10px}.arrow{font-size:11px}}
+.back-home{display:flex;align-items:center;justify-content:center;gap:8px;width:max-content;max-width:100%;margin:30px auto 0;padding:12px 22px;border:1px solid #d9d5e0;border-radius:999px;background:#fff;color:#252638;text-decoration:none;font-size:13px;font-weight:700;transition:background .2s,transform .2s}.back-home:hover{background:#eeeaf2;transform:translateY(-1px)}.back-home:focus-visible{outline:3px solid #8b83ac;outline-offset:3px}
+</style>
+</head>
+<body>
+<header><h1>再生list Account</h1><p>一覧</p></header>
+<main class="wrap">
+<div class="accounts">
+<a class="account" href="https://lit.link/OyJuWEqMHCNNUqQc1mpMXgHFrD22" target="_blank" rel="noopener noreferrer" aria-label="再生リストまとめを開く">
+<span class="avatar" aria-hidden="true">🔗</span>
+<div class="info"><div class="name">再生リストまとめ</div><div class="handle">lit.link</div></div>
+<span class="arrow" aria-hidden="true">↗</span>
+</a>
+</div>
+<a class="back-home" href="./index.html" aria-label="COMPASSのトップページに戻る">← トップに戻る</a>
+</main>
+</body>
+</html>
